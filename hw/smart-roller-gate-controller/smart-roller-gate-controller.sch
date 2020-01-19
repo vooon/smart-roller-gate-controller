@@ -1,0 +1,305 @@
+EESchema Schematic File Version 4
+LIBS:smart-roller-gate-controller-cache
+EELAYER 30 0
+EELAYER END
+$Descr A3 16535 11693
+encoding utf-8
+Sheet 1 1
+Title "roller-controller"
+Date "2020-01-19"
+Rev ""
+Comp "VEHQ"
+Comment1 "vehq-roller-v1"
+Comment2 "Ermakov V.A."
+Comment3 "Ermakov V.A."
+Comment4 ""
+$EndDescr
+$Comp
+L RF_Module:ESP32-WROOM-32U DD?
+U 1 1 5E248DA1
+P 4950 4100
+F 0 "DD?" H 4950 5681 50  0000 C CNN
+F 1 "ESP32-WROOM-32U" H 4950 5590 50  0000 C CNN
+F 2 "RF_Module:ESP32-WROOM-32U" H 4950 2600 50  0001 C CNN
+F 3 "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf" H 4650 4150 50  0001 C CNN
+	1    4950 4100
+	1    0    0    -1  
+$EndComp
+$Comp
+L Converter_ACDC:HLK-PM01 PS?
+U 1 1 5E24C24D
+P 4850 7350
+F 0 "PS?" H 4850 7675 50  0000 C CNN
+F 1 "HLK-PM01" H 4850 7584 50  0000 C CNN
+F 2 "Converter_ACDC:Converter_ACDC_HiLink_HLK-PMxx" H 4850 7050 50  0001 C CNN
+F 3 "http://www.hlktech.net/product_detail.php?ProId=54" H 5250 7000 50  0001 C CNN
+	1    4850 7350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5550 4000 7200 4000
+Wire Wire Line
+	7200 4000 7200 3300
+Wire Wire Line
+	7200 3300 7550 3300
+Wire Wire Line
+	5550 3900 7100 3900
+Wire Wire Line
+	7100 3900 7100 3400
+Wire Wire Line
+	7100 3400 7550 3400
+Wire Wire Line
+	5550 4200 7100 4200
+Wire Wire Line
+	7100 4200 7100 4900
+Wire Wire Line
+	7100 4900 8850 4900
+Wire Wire Line
+	8850 4900 8850 3900
+Wire Wire Line
+	8850 3900 8550 3900
+Wire Wire Line
+	5550 4100 7200 4100
+Wire Wire Line
+	7200 4100 7200 4800
+Wire Wire Line
+	7200 4800 8750 4800
+Wire Wire Line
+	8750 4800 8750 4000
+Text Label 6000 4200 0    50   ~ 0
+CC_DD
+Text Label 6000 4100 0    50   ~ 0
+CC_DC
+Wire Wire Line
+	5550 3400 7000 3400
+Wire Wire Line
+	7000 3400 7000 2900
+Wire Wire Line
+	7000 2900 7550 2900
+Text Label 6000 3400 0    50   ~ 0
+~CC_RST
+$Comp
+L Device:Polyfuse F?
+U 1 1 5E252890
+P 3950 7350
+F 0 "F?" H 4038 7396 50  0000 L CNN
+F 1 "Polyfuse" H 4038 7305 50  0000 L CNN
+F 2 "" H 4000 7150 50  0001 L CNN
+F 3 "~" H 3950 7350 50  0001 C CNN
+	1    3950 7350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Graphic:Logo_Open_Hardware_Small #LOGO?
+U 1 1 5E254732
+P 8750 11250
+F 0 "#LOGO?" H 8750 11525 50  0001 C CNN
+F 1 "Logo_Open_Hardware_Small" H 8750 11025 50  0001 C CNN
+F 2 "" H 8750 11250 50  0001 C CNN
+F 3 "~" H 8750 11250 50  0001 C CNN
+	1    8750 11250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Graphic:SYM_Flash_Small #SYM?
+U 1 1 5E25610E
+P 8350 11250
+F 0 "#SYM?" V 8260 11250 50  0001 C CNN
+F 1 "SYM_Flash_Small" V 8440 11250 50  0001 C CNN
+F 2 "" H 8350 11225 50  0001 C CNN
+F 3 "~" H 8750 11150 50  0001 C CNN
+	1    8350 11250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5E256C5D
+P 5750 7100
+F 0 "#PWR?" H 5750 6950 50  0001 C CNN
+F 1 "+5V" H 5765 7273 50  0000 C CNN
+F 2 "" H 5750 7100 50  0001 C CNN
+F 3 "" H 5750 7100 50  0001 C CNN
+	1    5750 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:Earth_Protective #PWR?
+U 1 1 5E2570D7
+P 4150 8250
+F 0 "#PWR?" H 4400 8000 50  0001 C CNN
+F 1 "Earth_Protective" H 4600 8100 50  0001 C CNN
+F 2 "" H 4150 8150 50  0001 C CNN
+F 3 "~" H 4150 8150 50  0001 C CNN
+	1    4150 8250
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E257518
+P 6350 7050
+F 0 "#PWR?" H 6350 6900 50  0001 C CNN
+F 1 "+3V3" H 6365 7223 50  0000 C CNN
+F 2 "" H 6350 7050 50  0001 C CNN
+F 3 "" H 6350 7050 50  0001 C CNN
+	1    6350 7050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E25819A
+P 4900 8250
+F 0 "#PWR?" H 4900 8000 50  0001 C CNN
+F 1 "GND" H 4905 8077 50  0000 C CNN
+F 2 "" H 4900 8250 50  0001 C CNN
+F 3 "" H 4900 8250 50  0001 C CNN
+	1    4900 8250
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Jumper_NC_Dual JP?
+U 1 1 5E258B2D
+P 9500 3100
+F 0 "JP?" V 9454 3202 50  0000 L CNN
+F 1 "Jumper_NC_Dual" V 9545 3202 50  0000 L CNN
+F 2 "" H 9500 3100 50  0001 C CNN
+F 3 "~" H 9500 3100 50  0001 C CNN
+	1    9500 3100
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Jumper_NC_Dual JP?
+U 1 1 5E25A017
+P 9500 3800
+F 0 "JP?" V 9454 3902 50  0000 L CNN
+F 1 "Jumper_NC_Dual" V 9545 3902 50  0000 L CNN
+F 2 "" H 9500 3800 50  0001 C CNN
+F 3 "~" H 9500 3800 50  0001 C CNN
+	1    9500 3800
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8750 4000 8550 4000
+$Comp
+L RF_Module:E18-MS1-PCB DD?
+U 1 1 5E24B18C
+P 8050 3500
+F 0 "DD?" H 8050 4481 50  0000 C CNN
+F 1 "E18-MS1-PCB" H 8050 4390 50  0000 C CNN
+F 2 "RF_Module:E18-MS1-PCB" H 7850 3700 50  0001 C CNN
+F 3 "http://www.cdebyte.com/en/downpdf.aspx?id=122" H 7850 3700 50  0001 C CNN
+	1    8050 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8550 3100 9400 3100
+Text Label 8850 3100 0    50   ~ 0
+CC_CFG0
+Wire Wire Line
+	8550 3800 9400 3800
+Text Label 8850 3800 0    50   ~ 0
+CC_CFG1
+$Comp
+L power:GND #PWR?
+U 1 1 5E262567
+P 8050 4350
+F 0 "#PWR?" H 8050 4100 50  0001 C CNN
+F 1 "GND" H 8055 4177 50  0000 C CNN
+F 2 "" H 8050 4350 50  0001 C CNN
+F 3 "" H 8050 4350 50  0001 C CNN
+	1    8050 4350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E262896
+P 8050 2450
+F 0 "#PWR?" H 8050 2300 50  0001 C CNN
+F 1 "+3V3" H 8065 2623 50  0000 C CNN
+F 2 "" H 8050 2450 50  0001 C CNN
+F 3 "" H 8050 2450 50  0001 C CNN
+	1    8050 2450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8050 4200 8050 4350
+$Comp
+L power:GND #PWR?
+U 1 1 5E268DA6
+P 9500 4200
+F 0 "#PWR?" H 9500 3950 50  0001 C CNN
+F 1 "GND" H 9505 4027 50  0000 C CNN
+F 2 "" H 9500 4200 50  0001 C CNN
+F 3 "" H 9500 4200 50  0001 C CNN
+	1    9500 4200
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E269114
+P 9500 2700
+F 0 "#PWR?" H 9500 2550 50  0001 C CNN
+F 1 "+3V3" H 9515 2873 50  0000 C CNN
+F 2 "" H 9500 2700 50  0001 C CNN
+F 3 "" H 9500 2700 50  0001 C CNN
+	1    9500 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8050 2700 8050 2450
+Wire Wire Line
+	9500 2700 9500 2750
+Wire Wire Line
+	9500 4200 9500 4100
+Wire Wire Line
+	9500 3350 9500 3400
+Wire Wire Line
+	9500 3400 9650 3400
+Wire Wire Line
+	9650 3400 9650 4100
+Wire Wire Line
+	9650 4100 9500 4100
+Connection ~ 9500 4100
+Wire Wire Line
+	9500 4100 9500 4050
+Wire Wire Line
+	9750 3500 9750 2750
+Wire Wire Line
+	9750 2750 9500 2750
+Connection ~ 9500 2750
+Wire Wire Line
+	9500 2750 9500 2850
+Wire Wire Line
+	9750 3500 9500 3500
+Wire Wire Line
+	9500 3500 9500 3550
+Text Label 6000 3900 0    50   ~ 0
+CC_TXD
+Text Label 6000 4000 0    50   ~ 0
+CC_RXD
+$Comp
+L power:GND #PWR?
+U 1 1 5E26FDFA
+P 4950 5650
+F 0 "#PWR?" H 4950 5400 50  0001 C CNN
+F 1 "GND" H 4955 5477 50  0000 C CNN
+F 2 "" H 4950 5650 50  0001 C CNN
+F 3 "" H 4950 5650 50  0001 C CNN
+	1    4950 5650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E2701E1
+P 4950 2500
+F 0 "#PWR?" H 4950 2350 50  0001 C CNN
+F 1 "+3V3" H 4965 2673 50  0000 C CNN
+F 2 "" H 4950 2500 50  0001 C CNN
+F 3 "" H 4950 2500 50  0001 C CNN
+	1    4950 2500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4950 2700 4950 2500
+Wire Wire Line
+	4950 5500 4950 5650
+$EndSCHEMATC
