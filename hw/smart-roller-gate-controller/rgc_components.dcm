@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP PE0
+D TE Connectivity, Miniature PCB Relay PE
+K Single Pole Relay SPDT
+F http://www.voltmaster.ru/pdf/electrotech_214.pdf
+$ENDCMP
+#
+#End Doc Library

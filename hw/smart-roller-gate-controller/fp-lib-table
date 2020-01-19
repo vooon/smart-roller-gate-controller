@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name smart-roller-gate-controller)(type KiCad)(uri ${KIPRJMOD}/smart-roller-gate-controller.pretty)(options "")(descr ""))
+)
