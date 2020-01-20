@@ -456,28 +456,6 @@ Wire Notes Line
 	3150 6900 3150 6150
 Text Notes 3300 6450 0    50   ~ 0
 PZEM-04 Module\n220V 10A
-$Comp
-L Connector:Screw_Terminal_01x02 XP5
-U 1 1 5E2FD226
-P 3000 6350
-F 0 "XP5" H 3080 6296 50  0000 L CNN
-F 1 "Screw_Terminal_01x02" H 3080 6251 50  0001 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x02_P5.08mm_Drill1.5mm" H 3000 6350 50  0001 C CNN
-F 3 "~" H 3000 6350 50  0001 C CNN
-	1    3000 6350
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:Screw_Terminal_01x02 XP8
-U 1 1 5E2FDA9D
-P 3000 6600
-F 0 "XP8" H 3080 6546 50  0000 L CNN
-F 1 "Screw_Terminal_01x02" H 3080 6501 50  0001 L CNN
-F 2 "Connector_Wire:SolderWirePad_1x02_P5.08mm_Drill1.5mm" H 3000 6600 50  0001 C CNN
-F 3 "~" H 3000 6600 50  0001 C CNN
-	1    3000 6600
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	2000 6350 2800 6350
 Wire Wire Line
@@ -1646,4 +1624,48 @@ F 3 "" H 8200 4650 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	8200 4600 8200 4650
+$Comp
+L Connector:Conn_01x01_Female J3
+U 1 1 5EDF2DCE
+P 3000 6600
+F 0 "J3" H 3050 6600 50  0000 L CNN
+F 1 "L_c" H 3150 6600 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1.2mm" H 3000 6600 50  0001 C CNN
+F 3 "~" H 3000 6600 50  0001 C CNN
+	1    3000 6600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J4
+U 1 1 5EDF3216
+P 3000 6700
+F 0 "J4" H 3050 6700 50  0000 L CNN
+F 1 "N_c" H 3150 6700 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1.2mm" H 3000 6700 50  0001 C CNN
+F 3 "~" H 3000 6700 50  0001 C CNN
+	1    3000 6700
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J1
+U 1 1 5EDF5A1B
+P 3000 6350
+F 0 "J1" H 3050 6350 50  0000 L CNN
+F 1 "L" H 3150 6350 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1.2mm" H 3000 6350 50  0001 C CNN
+F 3 "~" H 3000 6350 50  0001 C CNN
+	1    3000 6350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:Conn_01x01_Female J2
+U 1 1 5EDF5D02
+P 3000 6450
+F 0 "J2" H 3050 6450 50  0000 L CNN
+F 1 "N" H 3150 6450 50  0000 L CNN
+F 2 "Connector_Wire:SolderWirePad_1x01_Drill1.2mm" H 3000 6450 50  0001 C CNN
+F 3 "~" H 3000 6450 50  0001 C CNN
+	1    3000 6450
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
