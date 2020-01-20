@@ -698,52 +698,52 @@ BLK2
 $Comp
 L Connector:Screw_Terminal_01x04 XP?
 U 1 1 5E3C8266
-P 10300 6350
-F 0 "XP?" H 10200 6700 50  0000 C CNN
-F 1 "ROLLER SENSOR" H 10200 6600 50  0000 C CNN
-F 2 "" H 10300 6350 50  0001 C CNN
-F 3 "~" H 10300 6350 50  0001 C CNN
-	1    10300 6350
-	1    0    0    -1  
+P 2700 4250
+F 0 "XP?" H 2600 4600 50  0000 C CNN
+F 1 "ROLLER SENSOR" H 2600 4500 50  0000 C CNN
+F 2 "" H 2700 4250 50  0001 C CNN
+F 3 "~" H 2700 4250 50  0001 C CNN
+	1    2700 4250
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:+5V #PWR?
 U 1 1 5E3CF791
-P 9800 5850
-F 0 "#PWR?" H 9800 5700 50  0001 C CNN
-F 1 "+5V" H 9815 6023 50  0000 C CNN
-F 2 "" H 9800 5850 50  0001 C CNN
-F 3 "" H 9800 5850 50  0001 C CNN
-	1    9800 5850
-	1    0    0    -1  
+P 3200 3750
+F 0 "#PWR?" H 3200 3600 50  0001 C CNN
+F 1 "+5V" H 3215 3923 50  0000 C CNN
+F 2 "" H 3200 3750 50  0001 C CNN
+F 3 "" H 3200 3750 50  0001 C CNN
+	1    3200 3750
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:GND #PWR?
 U 1 1 5E3CFC6E
-P 9800 6650
-F 0 "#PWR?" H 9800 6400 50  0001 C CNN
-F 1 "GND" H 9805 6477 50  0000 C CNN
-F 2 "" H 9800 6650 50  0001 C CNN
-F 3 "" H 9800 6650 50  0001 C CNN
-	1    9800 6650
-	1    0    0    -1  
+P 3200 4550
+F 0 "#PWR?" H 3200 4300 50  0001 C CNN
+F 1 "GND" H 3205 4377 50  0000 C CNN
+F 2 "" H 3200 4550 50  0001 C CNN
+F 3 "" H 3200 4550 50  0001 C CNN
+	1    3200 4550
+	-1   0    0    -1  
 $EndComp
 Wire Wire Line
-	10100 6250 9800 6250
+	2900 4150 3200 4150
 Wire Wire Line
-	9800 6250 9800 5850
+	3200 4150 3200 3750
 Wire Wire Line
-	10100 6550 9800 6550
+	2900 4450 3200 4450
 Wire Wire Line
-	9800 6550 9800 6650
+	3200 4450 3200 4550
 Wire Wire Line
-	10100 6350 9550 6350
+	2900 4250 3450 4250
 $Comp
 L Device:R R?
 U 1 1 5E3DEDCE
 P 5500 2350
 F 0 "R?" H 5570 2396 50  0000 L CNN
-F 1 "R" H 5570 2305 50  0000 L CNN
+F 1 "10k" H 5570 2305 50  0000 L CNN
 F 2 "" V 5430 2350 50  0001 C CNN
 F 3 "~" H 5500 2350 50  0001 C CNN
 	1    5500 2350
@@ -769,14 +769,12 @@ Wire Wire Line
 Wire Wire Line
 	5500 2600 5050 2600
 Connection ~ 5500 2600
-Text Label 5100 2600 0    50   ~ 0
-~RESET
 $Comp
 L rgc_components:PE0 K?
 U 1 1 5E264195
 P 4900 8000
 F 0 "K?" V 4333 8000 50  0000 C CNN
-F 1 "PE0" V 4424 8000 50  0000 C CNN
+F 1 "PE014005" V 4424 8000 50  0000 C CNN
 F 2 "smart-roller-gate-controller:PE014005" H 6030 7970 50  0001 C CNN
 F 3 "http://www.voltmaster.ru/pdf/electrotech_214.pdf" H 4900 8000 50  0001 C CNN
 	1    4900 8000
@@ -787,7 +785,7 @@ L rgc_components:PE0 K?
 U 1 1 5E2689CE
 P 3950 8000
 F 0 "K?" V 3383 8000 50  0000 C CNN
-F 1 "PE0" V 3474 8000 50  0000 C CNN
+F 1 "PE014005" V 3474 8000 50  0000 C CNN
 F 2 "smart-roller-gate-controller:PE014005" H 5080 7970 50  0001 C CNN
 F 3 "http://www.voltmaster.ru/pdf/electrotech_214.pdf" H 3950 8000 50  0001 C CNN
 	1    3950 8000
@@ -848,10 +846,10 @@ Text Label 3150 8200 0    50   ~ 0
 L_m
 NoConn ~ 5200 8100
 $Comp
-L Device:D D?
+L Device:D VD?
 U 1 1 5E2B0AFE
 P 3950 7300
-F 0 "D?" H 3950 7516 50  0000 C CNN
+F 0 "VD?" H 3950 7516 50  0000 C CNN
 F 1 "D" H 3950 7425 50  0000 C CNN
 F 2 "" H 3950 7300 50  0001 C CNN
 F 3 "~" H 3950 7300 50  0001 C CNN
@@ -859,10 +857,10 @@ F 3 "~" H 3950 7300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L Device:D D?
+L Device:D VD?
 U 1 1 5E2B1E91
 P 4900 7300
-F 0 "D?" H 4900 7516 50  0000 C CNN
+F 0 "VD?" H 4900 7516 50  0000 C CNN
 F 1 "D" H 4900 7425 50  0000 C CNN
 F 2 "" H 4900 7300 50  0001 C CNN
 F 3 "~" H 4900 7300 50  0001 C CNN
@@ -944,30 +942,205 @@ K2_l
 $Comp
 L Device:R R?
 U 1 1 5E346550
-P 9550 6100
-F 0 "R?" H 9620 6146 50  0000 L CNN
-F 1 "R" H 9620 6055 50  0000 L CNN
-F 2 "" V 9480 6100 50  0001 C CNN
-F 3 "~" H 9550 6100 50  0001 C CNN
-	1    9550 6100
-	1    0    0    -1  
+P 3450 4000
+F 0 "R?" H 3520 4046 50  0000 L CNN
+F 1 "4.7k" H 3520 3955 50  0000 L CNN
+F 2 "" V 3380 4000 50  0001 C CNN
+F 3 "~" H 3450 4000 50  0001 C CNN
+	1    3450 4000
+	-1   0    0    -1  
 $EndComp
 $Comp
 L power:+3V3 #PWR?
 U 1 1 5E348D74
-P 9550 5850
-F 0 "#PWR?" H 9550 5700 50  0001 C CNN
-F 1 "+3V3" H 9565 6023 50  0000 C CNN
-F 2 "" H 9550 5850 50  0001 C CNN
-F 3 "" H 9550 5850 50  0001 C CNN
-	1    9550 5850
+P 3450 3750
+F 0 "#PWR?" H 3450 3600 50  0001 C CNN
+F 1 "+3V3" H 3465 3923 50  0000 C CNN
+F 2 "" H 3450 3750 50  0001 C CNN
+F 3 "" H 3450 3750 50  0001 C CNN
+	1    3450 3750
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	3450 4150 3450 4250
+Connection ~ 3450 4250
+Wire Wire Line
+	3450 4250 3600 4250
+Wire Wire Line
+	3450 3850 3450 3750
+$Comp
+L Connector_Generic:Conn_02x04_Top_Bottom XP?
+U 1 1 5E27AD9E
+P 3200 2650
+F 0 "XP?" H 3250 2967 50  0000 C CNN
+F 1 "SOICbite" H 3250 2876 50  0000 C CNN
+F 2 "SOICbite:SOIC_clipProgSmall" H 3200 2650 50  0001 C CNN
+F 3 "https://github.com/SimonMerrett/SOICbite" H 3200 2650 50  0001 C CNN
+	1    3200 2650
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E27B6DD
+P 2900 2450
+F 0 "#PWR?" H 2900 2300 50  0001 C CNN
+F 1 "+3V3" H 2915 2623 50  0000 C CNN
+F 2 "" H 2900 2450 50  0001 C CNN
+F 3 "" H 2900 2450 50  0001 C CNN
+	1    2900 2450
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9550 6250 9550 6350
-Connection ~ 9550 6350
+	3000 2650 2600 2650
 Wire Wire Line
-	9550 6350 9400 6350
+	3000 2750 2600 2750
 Wire Wire Line
-	9550 5950 9550 5850
+	3000 2550 2900 2550
+Wire Wire Line
+	2900 2550 2900 2450
+Text GLabel 2600 2650 0    50   Output ~ 0
+GPIO0
+Text GLabel 2600 2750 0    50   Output ~ 0
+GPIO2
+$Comp
+L power:GND #PWR?
+U 1 1 5E2923C9
+P 2900 2950
+F 0 "#PWR?" H 2900 2700 50  0001 C CNN
+F 1 "GND" H 2905 2777 50  0000 C CNN
+F 2 "" H 2900 2950 50  0001 C CNN
+F 3 "" H 2900 2950 50  0001 C CNN
+	1    2900 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3000 2850 2900 2850
+Wire Wire Line
+	2900 2850 2900 2950
+Wire Wire Line
+	3500 2550 3800 2550
+Wire Wire Line
+	3500 2650 3800 2650
+Text GLabel 3800 2550 2    50   Output ~ 0
+ESP_RX
+Text GLabel 3800 2650 2    50   Input ~ 0
+ESP_TX
+NoConn ~ 3500 2750
+Wire Wire Line
+	3500 2850 3800 2850
+Text GLabel 3800 2850 2    50   Output ~ 0
+~RESET
+Text GLabel 3600 4250 2    50   Output ~ 0
+~RSNS
+Text GLabel 5050 2600 0    50   Input ~ 0
+~RESET
+Text Notes 11300 7350 0    50   ~ 0
+According to datasheet it is not necessary to pull-up/pull-down pins\n\nhttps://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf
+$Comp
+L Device:R R?
+U 1 1 5E30E9B7
+P 7200 2150
+F 0 "R?" H 7270 2196 50  0000 L CNN
+F 1 "n/c" H 7270 2105 50  0000 L CNN
+F 2 "" V 7130 2150 50  0001 C CNN
+F 3 "~" H 7200 2150 50  0001 C CNN
+	1    7200 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5E30F4D0
+P 7300 2150
+F 0 "R?" H 7370 2196 50  0000 L CNN
+F 1 "n/c" H 7370 2105 50  0000 L CNN
+F 2 "" V 7230 2150 50  0001 C CNN
+F 3 "~" H 7300 2150 50  0001 C CNN
+	1    7300 2150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R?
+U 1 1 5E30FB2F
+P 7400 5200
+F 0 "R?" H 7470 5246 50  0000 L CNN
+F 1 "n/c" H 7470 5155 50  0000 L CNN
+F 2 "" V 7330 5200 50  0001 C CNN
+F 3 "~" H 7400 5200 50  0001 C CNN
+	1    7400 5200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7000 2700 7700 2700
+Wire Wire Line
+	7000 2900 7700 2900
+Text GLabel 7700 2900 2    50   Input ~ 0
+ESP_RX
+Text GLabel 7700 2700 2    50   Output ~ 0
+ESP_TX
+Text GLabel 7700 2600 2    50   Input ~ 0
+GPIO0
+Text GLabel 7700 2800 2    50   Input ~ 0
+GPIO2
+$Comp
+L power:+3V3 #PWR?
+U 1 1 5E376503
+P 7300 1800
+F 0 "#PWR?" H 7300 1650 50  0001 C CNN
+F 1 "+3V3" H 7315 1973 50  0000 C CNN
+F 2 "" H 7300 1800 50  0001 C CNN
+F 3 "" H 7300 1800 50  0001 C CNN
+	1    7300 1800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7300 1800 7300 1900
+Wire Wire Line
+	7200 2000 7200 1900
+Wire Wire Line
+	7200 1900 7300 1900
+Connection ~ 7300 1900
+Wire Wire Line
+	7300 1900 7300 2000
+$Comp
+L power:GND #PWR?
+U 1 1 5E392C04
+P 7400 5450
+F 0 "#PWR?" H 7400 5200 50  0001 C CNN
+F 1 "GND" H 7405 5277 50  0000 C CNN
+F 2 "" H 7400 5450 50  0001 C CNN
+F 3 "" H 7400 5450 50  0001 C CNN
+	1    7400 5450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7400 5350 7400 5450
+Wire Wire Line
+	7000 2800 7400 2800
+Wire Wire Line
+	7000 2600 7200 2600
+Wire Wire Line
+	7300 2300 7300 3500
+Wire Wire Line
+	7000 3500 7300 3500
+Wire Wire Line
+	7200 2300 7200 2600
+Connection ~ 7200 2600
+Wire Wire Line
+	7200 2600 7700 2600
+Wire Wire Line
+	7400 5050 7400 2800
+Connection ~ 7400 2800
+Wire Wire Line
+	7400 2800 7700 2800
+$Comp
+L Connector_Generic:Conn_02x05_Odd_Even XP?
+U 1 1 5E402876
+P 9850 5850
+F 0 "XP?" H 9900 6267 50  0000 C CNN
+F 1 "SPI" H 9900 6176 50  0000 C CNN
+F 2 "" H 9850 5850 50  0001 C CNN
+F 3 "~" H 9850 5850 50  0001 C CNN
+	1    9850 5850
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
