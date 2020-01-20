@@ -1030,11 +1030,11 @@ Wire Wire Line
 	3500 2850 3800 2850
 Text GLabel 3800 2850 2    50   Output ~ 0
 ~RESET
-Text GLabel 3600 4250 2    50   Output ~ 0
+Text GLabel 3600 4250 2    50   UnSpc ~ 0
 ~RSNS
 Text GLabel 5050 2600 0    50   Input ~ 0
 ~RESET
-Text Notes 11300 7350 0    50   ~ 0
+Text Notes 11650 8650 0    50   ~ 0
 According to datasheet it is not necessary to pull-up/pull-down pins\n\nhttps://www.espressif.com/sites/default/files/documentation/esp32-wroom-32d_esp32-wroom-32u_datasheet_en.pdf
 $Comp
 L Device:R R?
@@ -1268,9 +1268,9 @@ Wire Wire Line
 	13550 3750 13950 3750
 Wire Wire Line
 	13550 3850 13950 3850
-Text GLabel 12400 3650 0    50   Input ~ 0
-MISO
 Text GLabel 13950 3750 2    50   Input ~ 0
+MISO
+Text GLabel 12400 3650 0    50   Input ~ 0
 MOSI
 Text GLabel 13950 3650 2    50   Input ~ 0
 SCK
@@ -1463,7 +1463,7 @@ L Device:R R?
 U 1 1 5E86B586
 P 5650 9300
 F 0 "R?" H 5720 9346 50  0000 L CNN
-F 1 "10k" H 5720 9255 50  0000 L CNN
+F 1 "4.7k" H 5720 9255 50  0000 L CNN
 F 2 "" V 5580 9300 50  0001 C CNN
 F 3 "~" H 5650 9300 50  0001 C CNN
 	1    5650 9300
@@ -1474,7 +1474,7 @@ L Device:R R?
 U 1 1 5E871448
 P 5650 9400
 F 0 "R?" H 5720 9446 50  0000 L CNN
-F 1 "10k" H 5720 9355 50  0000 L CNN
+F 1 "4.7k" H 5720 9355 50  0000 L CNN
 F 2 "" V 5580 9400 50  0001 C CNN
 F 3 "~" H 5650 9400 50  0001 C CNN
 	1    5650 9400
@@ -1533,12 +1533,37 @@ Wire Wire Line
 Connection ~ 12500 2850
 Wire Wire Line
 	12500 2850 12400 2850
-Text GLabel 8850 6050 2    50   Input ~ 0
+Text GLabel 7600 4000 2    50   Output ~ 0
 PZ_RX
-Text GLabel 8900 6200 2    50   Output ~ 0
-PZ_TX
 Text GLabel 7600 4100 2    50   Input ~ 0
-SCL
-Text GLabel 7600 4000 2    50   Input ~ 0
-SDA
+PZ_TX
+Text GLabel 7600 4400 2    50   Input ~ 0
+~S2_RST
+Wire Wire Line
+	7000 4400 7600 4400
+Text GLabel 7150 4500 2    50   UnSpc ~ 0
+BLK1
+Text GLabel 7150 4600 2    50   UnSpc ~ 0
+BLK2
+Wire Wire Line
+	7000 4600 7150 4600
+Wire Wire Line
+	7150 4700 7000 4700
+Text GLabel 7150 4700 2    50   UnSpc ~ 0
+~RSNS
+Wire Wire Line
+	7000 4500 7150 4500
+Text GLabel 7550 4800 2    50   Input ~ 0
+D_BUSY
+Text GLabel 7550 4900 2    50   Input ~ 0
+S2_ISR
+Wire Wire Line
+	7000 4800 7550 4800
+Wire Wire Line
+	7000 4900 7550 4900
+Wire Wire Line
+	2900 4350 3200 4350
+Wire Wire Line
+	3200 4350 3200 4450
+Connection ~ 3200 4450
 $EndSCHEMATC
