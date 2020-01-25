@@ -600,21 +600,17 @@ $EndComp
 $Comp
 L power:Earth_Protective #PWR028
 U 1 1 5E392423
-P 6500 8200
-F 0 "#PWR028" H 6750 7950 50  0001 C CNN
-F 1 "Earth_Protective" H 6950 8050 50  0001 C CNN
-F 2 "" H 6500 8100 50  0001 C CNN
-F 3 "~" H 6500 8100 50  0001 C CNN
-	1    6500 8200
+P 6450 8250
+F 0 "#PWR028" H 6700 8000 50  0001 C CNN
+F 1 "Earth_Protective" H 6900 8100 50  0001 C CNN
+F 2 "" H 6450 8150 50  0001 C CNN
+F 3 "~" H 6450 8150 50  0001 C CNN
+	1    6450 8250
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	6600 8100 6500 8100
-Wire Wire Line
-	6500 8100 6500 8200
-Text Label 6300 7800 0    50   ~ 0
+Text Label 6150 7900 0    50   ~ 0
 L_m1
-Text Label 6300 7900 0    50   ~ 0
+Text Label 6150 8000 0    50   ~ 0
 L_m2
 $Comp
 L Connector:Screw_Terminal_01x04 XP11
@@ -750,19 +746,11 @@ $EndComp
 Wire Wire Line
 	5200 8300 5500 8300
 Wire Wire Line
-	5500 8300 5500 7800
-Wire Wire Line
-	5500 7800 6600 7800
-Wire Wire Line
 	4250 8300 4350 8300
 Wire Wire Line
 	4350 8300 4350 8500
 Wire Wire Line
 	4350 8500 5600 8500
-Wire Wire Line
-	5600 8500 5600 7900
-Wire Wire Line
-	5600 7900 6600 7900
 Wire Wire Line
 	4250 8100 4450 8100
 Wire Wire Line
@@ -773,10 +761,6 @@ Text Label 4300 8100 0    50   ~ 0
 L_lock1_2
 Wire Wire Line
 	2350 8600 5700 8600
-Wire Wire Line
-	5700 8600 5700 8000
-Wire Wire Line
-	5700 8000 6600 8000
 Wire Wire Line
 	2350 8600 2350 9300
 $Comp
@@ -1668,4 +1652,20 @@ F 3 "~" H 3000 6450 50  0001 C CNN
 	1    3000 6450
 	1    0    0    -1  
 $EndComp
+Wire Wire Line
+	6600 7800 6450 7800
+Wire Wire Line
+	6450 7800 6450 8250
+Wire Wire Line
+	5700 8600 5700 8100
+Wire Wire Line
+	5700 8100 6600 8100
+Wire Wire Line
+	5600 8500 5600 7900
+Wire Wire Line
+	5600 7900 6600 7900
+Wire Wire Line
+	5500 8300 5500 8000
+Wire Wire Line
+	5500 8000 6600 8000
 $EndSCHEMATC
