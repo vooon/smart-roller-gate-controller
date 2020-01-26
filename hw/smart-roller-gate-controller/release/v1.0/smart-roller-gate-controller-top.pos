@@ -1,0 +1,25 @@
+### Module positions - created on Вс 26 янв 2020 17:02:01 ###
+### Printed by Pcbnew version kicad 5.1.4+dfsg1-1
+## Unit = mm, Angle = deg.
+## Side : top
+# Ref     Val              Package                                           PosX       PosY       Rot  Side
+C1        10.0             CP_EIA-3216-10_Kemet-I                        194.0000  -140.0000  180.0000  top
+C2        10.0             CP_EIA-3216-10_Kemet-I                        194.0000  -150.0000    0.0000  top
+DA1       HT7333-A         SOT-89-3                                      194.0000  -145.0000    0.0000  top
+DD1       E18-MS1-PCB      E18-MS1-PCB                                   164.0000  -106.0000    0.0000  top
+DD2       ESP32-WROOM-32U  ESP32-WROOM-32U                               136.0000  -110.0000    0.0000  top
+R1        n/c              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   107.0000  -104.7000    0.0000  top
+R2        n/c              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   107.0000  -106.2000    0.0000  top
+R3        10k              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   107.0000  -103.0000    0.0000  top
+R4        4.7k             R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   179.0000  -132.0000  180.0000  top
+R5        10k              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   123.0000  -116.5000  270.0000  top
+R6        n/c              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   128.0000  -122.0000    0.0000  top
+R7        10k              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   120.0000  -129.0000  180.0000  top
+R8        10k              R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   135.0000  -129.0000  180.0000  top
+R9        4.7k             R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   179.0000  -130.5000    0.0000  top
+R10       4.7k             R_0603_1608Metric_Pad1.05x0.95mm_HandSolder   179.0000  -129.0000    0.0000  top
+VD1       D                D_SOD-123                                     115.0000  -133.0000    0.0000  top
+VD2       D                D_SOD-123                                     130.0000  -133.0000    0.0000  top
+VT1       BSS123           SOT-23-3                                      120.0000  -132.0000  270.0000  top
+VT2       BSS123           SOT-23-3                                      135.0000  -132.0000  270.0000  top
+## End
