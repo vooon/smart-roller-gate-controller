@@ -1,4 +1,4 @@
-update=Вс 26 янв 2020 14:14:10
+update=Вс 26 янв 2020 15:13:44
 version=1
 last_client=kicad
 [general]
@@ -42,9 +42,10 @@ TrackWidth1=0.25
 TrackWidth2=0.15
 TrackWidth3=0.2
 TrackWidth4=0.25
-TrackWidth5=1
-TrackWidth6=1.2
-TrackWidth7=1.5
+TrackWidth5=0.5
+TrackWidth6=1
+TrackWidth7=1.2
+TrackWidth8=1.5
 ViaDiameter1=0.8
 ViaDrill1=0.4
 dPairWidth1=0.2
@@ -253,9 +254,20 @@ dPairWidth=0.2
 dPairGap=0.25
 dPairViaGap=0.25
 [pcbnew/Netclasses/1]
+Name=HV Power
+Clearance=2
+TrackWidth=1
+ViaDiameter=1.2
+ViaDrill=0.7
+uViaDiameter=0.3
+uViaDrill=0.1
+dPairWidth=0.2
+dPairGap=0.25
+dPairViaGap=0.25
+[pcbnew/Netclasses/2]
 Name=LV Power
 Clearance=0.2
-TrackWidth=0.25
+TrackWidth=0.5
 ViaDiameter=0.8
 ViaDrill=0.4
 uViaDiameter=0.3
@@ -263,7 +275,7 @@ uViaDrill=0.1
 dPairWidth=0.2
 dPairGap=0.25
 dPairViaGap=0.25
-[pcbnew/Netclasses/2]
+[pcbnew/Netclasses/3]
 Name=Signal Small
 Clearance=0.15
 TrackWidth=0.2
