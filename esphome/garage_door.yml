@@ -1,3 +1,6 @@
+---
+#<<: !include secrets.yaml
+
 esphome:
   name: garage_door
   platform: ESP32
@@ -5,15 +8,15 @@ esphome:
 
 wifi:
   networks:
-    - ssid: "AL-76"
-      password: ""
-    - ssid: "plein-aire-ha"
-      password: ""
+    - ssid: !secret wifi_ssid1
+      password: !secret wifi_passwd1
+    - ssid: !secret wifi_ssid2
+      password: !secret wifi_passwd2
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "Garage Door Fallback Hotspot"
-    password: "glNMQzhMJQZy"
+    password: !secret wifi_ap_passwd
 
 captive_portal:
 
@@ -31,7 +34,10 @@ ota:
 
 time:
   - platform: homeassistant
-    id: esptime
+    id: esp_time
+  - platform: sntp
+    id: ntp_time
+    timezone: Europe/Moscow
 
 #esp32_ble_tracker:
 
@@ -47,8 +53,8 @@ uart:
     baud_rate: 115200
     stop_bits: 1
   - id: uart_pzem
-    tx_pin: 22
-    rx_pin: 21
+    tx_pin: 21
+    rx_pin: 22
     baud_rate: 9600
     stop_bits: 2
 
@@ -82,25 +88,28 @@ font:
     size: 14
 
 binary_sensor:
-  - platform: gpio
-    pin: 27
-    id: s2_isr
+  #- platform: gpio
+  #  pin: 27
+  #  id: s2_isr
+
   - platform: gpio
     id: blk1
-    name: "Door block detection 1"
+    name: "Safety block 1"
     pin:
       number: 33
-      inverted: true
+      inverted: true  # TODO: in real installation open circuit = block
     filters:
       - delayed_on: 10ms
+
   - platform: gpio
     id: blk2
-    name: "Door block detection 2"
+    name: "Safety block 2 / Open/Close"
     pin:
       number: 34
       inverted: true
     filters:
       - delayed_on: 10ms
+
   - platform: gpio
     id: rsns
     name: "Door closed end stop"
@@ -109,6 +118,13 @@ binary_sensor:
       inverted: true
     filters:
       - delayed_on: 10ms
+
+text_sensor:
+  - platform: wifi_info
+    ssid:
+      name: SSID
+    bssid:
+      name: BSSID
 
 sensor:
   - platform: wifi_signal
@@ -122,15 +138,15 @@ sensor:
   - platform: pzemac
     modbus_id: modbus_pzem
     current:
-      name: "PZEM Current"
+      name: "Current"
     voltage:
-      name: "PZEM Voltage"
+      name: "Voltage"
     power:
-      name: "PZEM Power"
+      name: "Power"
     frequency:
-      name: "PZEM Frequency"
+      name: "Frequency"
     power_factor:
-      name: "PZEM Power Factor"
+      name: "Power Factor"
     update_interval: 10s
 
 switch:
@@ -143,6 +159,7 @@ switch:
       - k1_up
       - k2_down
     restore_mode: always off
+
   - platform: gpio
     id: k2_down
     pin: 4
