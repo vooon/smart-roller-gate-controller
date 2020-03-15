@@ -1,0 +1,153 @@
+esphome:
+  name: garage_door
+  platform: ESP32
+  board: esp-wrover-kit
+
+wifi:
+  networks:
+    - ssid: "AL-76"
+      password: ""
+    - ssid: "plein-aire-ha"
+      password: ""
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Garage Door Fallback Hotspot"
+    password: "glNMQzhMJQZy"
+
+captive_portal:
+
+# Enable logging
+logger:
+
+debug:
+
+# Enable Home Assistant API
+api:
+
+web_server:
+
+ota:
+
+time:
+  - platform: homeassistant
+    id: esptime
+
+#esp32_ble_tracker:
+
+uart:
+#  - id: uart
+#    tx_pin: 1
+#    rx_pin: 3
+#    baud_rate: 115200
+#    stop_bits: 1
+  - id: uart_cc
+    tx_pin: 16
+    rx_pin: 17
+    baud_rate: 115200
+    stop_bits: 1
+  - id: uart_pzem
+    tx_pin: 22
+    rx_pin: 21
+    baud_rate: 9600
+    stop_bits: 2
+
+modbus:
+  uart_id: uart_pzem
+  id: modbus_pzem
+
+spi:
+  clk_pin: 14
+  mosi_pin: 13
+  miso_pin: 12
+
+display:
+  - platform: waveshare_epaper
+    cs_pin: 23
+    dc_pin: 25
+    busy_pin:
+      number: 32
+      mode: INPUT_PULLUP
+    reset_pin: 0
+    model: 2.90in-b
+    #full_update_every: 30
+    update_interval: 60s
+    lambda: |-
+      it.print(0, 0, id(font_m14), "Hello World!");
+      //it.fill(COLOR_ON);
+
+font:
+  - file: UbuntuMono-R.ttf
+    id: font_m14
+    size: 14
+
+binary_sensor:
+  - platform: gpio
+    pin: 27
+    id: s2_isr
+  - platform: gpio
+    id: blk1
+    name: "Door block detection 1"
+    pin:
+      number: 33
+      inverted: true
+    filters:
+      - delayed_on: 10ms
+  - platform: gpio
+    id: blk2
+    name: "Door block detection 2"
+    pin:
+      number: 34
+      inverted: true
+    filters:
+      - delayed_on: 10ms
+  - platform: gpio
+    id: rsns
+    name: "Door closed end stop"
+    pin:
+      number: 35
+      inverted: true
+    filters:
+      - delayed_on: 10ms
+
+sensor:
+  - platform: wifi_signal
+    name: "WiFi Signal Sensor"
+    update_interval: 10s
+
+  - platform: esp32_hall
+    name: "ESP32 Hall Sensor"
+    update_interval: 10s
+
+  - platform: pzemac
+    modbus_id: modbus_pzem
+    current:
+      name: "PZEM Current"
+    voltage:
+      name: "PZEM Voltage"
+    power:
+      name: "PZEM Power"
+    frequency:
+      name: "PZEM Frequency"
+    power_factor:
+      name: "PZEM Power Factor"
+    update_interval: 10s
+
+switch:
+  - platform: gpio
+    id: k1_up
+    pin: 2
+    # NOTE: hardware has lock from that,
+    #       K1 NC powers K2, so we always may open the door.
+    interlock: &relay_lock
+      - k1_up
+      - k2_down
+    restore_mode: always off
+  - platform: gpio
+    id: k2_down
+    pin: 4
+    interlock: *relay_lock
+    restore_mode: always off
+
+#cover:
+#  - platform: template
