@@ -166,5 +166,32 @@ switch:
     interlock: *relay_lock
     restore_mode: always off
 
-#cover:
-#  - platform: template
+cover:
+  # NOTE: my roller have built-in endstops,
+  #       so it's possible to detect that operation is done
+  #       by checking that PZEM Current < 0.1 A
+  #
+  #       blk1 and blk2 will be used to STOP motion
+  #       because something blocks gate, e.g. a car.
+  #
+  #       rsns should indicate that door is closed
+  #
+  # TODO: make custom cover controller
+  - platform: time_based
+    name: Door
+
+    open_action:
+      - switch.turn_on: k1_up
+    open_duration: 2min
+
+    close_action:
+      - switch.turn_on: k2_down
+    close_duration: 2min
+
+    stop_action:
+      - switch.turn_off: k1_up
+      - switch.turn_off: k2_down
+
+    # NOTE: my roller have it, but i do not want to leave
+    #       motor energized.
+    has_built_in_endstop: false
