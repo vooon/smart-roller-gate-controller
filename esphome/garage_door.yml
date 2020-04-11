@@ -67,25 +67,25 @@ spi:
   mosi_pin: 13
   miso_pin: 12
 
-display:
-  - platform: waveshare_epaper
-    cs_pin: 23
-    dc_pin: 25
-    busy_pin:
-      number: 32
-      mode: INPUT_PULLUP
-    reset_pin: 0
-    model: 2.90in-b
-    #full_update_every: 30
-    update_interval: 60s
-    lambda: |-
-      it.print(0, 0, id(font_m14), "Hello World!");
-      //it.fill(COLOR_ON);
-
-font:
-  - file: UbuntuMono-R.ttf
-    id: font_m14
-    size: 14
+#display:
+#  - platform: waveshare_epaper
+#    cs_pin: 23
+#    dc_pin: 25
+#    busy_pin:
+#      number: 32
+#      mode: INPUT_PULLUP
+#    reset_pin: 0
+#    model: 2.90in-b
+#    #full_update_every: 30
+#    update_interval: 60s
+#    lambda: |-
+#      it.print(0, 0, id(font_m14), "Hello World!");
+#      //it.fill(COLOR_ON);
+#
+#font:
+#  - file: UbuntuMono-R.ttf
+#    id: font_m14
+#    size: 14
 
 globals:
   - id: prev_door_operation
@@ -115,13 +115,18 @@ binary_sensor:
             id: prev_door_operation
             value: !lambda |
               return id(door_cover).current_operation;
-        - logger.log: "blk1: activated: stopping cover"
+        - logger.log:
+            format: "blk1: activated: stopping cover"
+            level: INFO
         - cover.stop: door_cover
-        - logger.log: "blk1: cover stopped"
+        - logger.log:
+            format: "blk1: cover stopped"
+            level: INFO
     on_release:
       then:
         - logger.log:
             format: "blk1: deactivated: continue cover operation: %s"
+            level: INFO
             args:
               - &prev_state_str "cover_operation_to_str(id(prev_door_operation))"
         - lambda: !lambda |
@@ -133,7 +138,9 @@ binary_sensor:
               call.set_command_close();
               call.perform();
             }
-        - logger.log: "blk1: operation restored"
+        - logger.log:
+            format: "blk1: operation restored"
+            level: INFO
 
   - platform: gpio
     id: blk2
@@ -147,6 +154,7 @@ binary_sensor:
       then:
         - logger.log:
             format: "blk2: activated: prev state: %s"
+            level: INFO
             args: [*prev_state_str]
         - lambda: !lambda |
             auto op = id(door_cover).current_operation;
@@ -155,14 +163,18 @@ binary_sensor:
               id(prev_door_operation) = op;
               call.set_command_stop();
             } else {
-              if (id(prev_door_operation) == COVER_OPERATION_CLOSING) {
+              if (id(prev_door_operation) == COVER_OPERATION_CLOSING ||
+                  id(door_cover).is_fully_closed()) {
                 call.set_command_open();
-              } else {
+              } else if (id(prev_door_operation) == COVER_OPERATION_OPENING ||
+                         id(door_cover).is_fully_open()) {
                 call.set_command_close();
               }
             }
             call.perform();
-        - logger.log: "blk2: operation done"
+        - logger.log:
+            format: "blk2: operation done"
+            level: INFO
 
   - platform: gpio
     id: rsns
