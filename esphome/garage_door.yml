@@ -151,6 +151,7 @@ sensor:
 
 switch:
   - platform: gpio
+    name: Door Motor Up
     id: k1_up
     pin: 2
     # NOTE: hardware has lock from that,
@@ -161,6 +162,7 @@ switch:
     restore_mode: always off
 
   - platform: gpio
+    name: Door Motor Down
     id: k2_down
     pin: 4
     interlock: *relay_lock
