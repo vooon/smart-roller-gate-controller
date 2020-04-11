@@ -252,7 +252,7 @@ sensor:
 switch:
   - platform: gpio
     name: Door Motor Up
-    internal: true
+    #internal: true
     id: k1_up
     pin: 2
     # NOTE: hardware has lock from that,
@@ -264,7 +264,7 @@ switch:
 
   - platform: gpio
     name: Door Motor Down
-    internal: true
+    #internal: true
     id: k2_down
     pin: 4
     interlock: *relay_lock
@@ -321,6 +321,7 @@ cover:
 
 script:
   - id: open_close_stop_button_scr
+    #name: "Open/Close/Stop Door"
     then:
       - logger.log:
           format: "open/close/stop activated: prev state: %s"
@@ -346,6 +347,7 @@ script:
           level: INFO
 
   - id: open_stop_button_scr
+    #name: "Open/Stop Door"
     then:
       - logger.log:
           format: "open/stop: activated"
@@ -353,7 +355,8 @@ script:
       - if: &scr_if
           condition:
             lambda: !lambda |
-              return id(door_cover).current_operation != COVER_OPERATION_IDLE;
+              const auto op = id(door_cover).current_operation;
+              return op != COVER_OPERATION_IDLE || op != COVER_OPERATION_OPENING;
           then:
             - cover.stop: door_cover
           else:
@@ -363,12 +366,17 @@ script:
           level: INFO
 
   - id: close_stop_button_scr
+    #name: "Close/Stop Door"
     then:
       - logger.log:
           format: "close/stop: activated"
           level: INFO
       - if:
           <<: *scr_if
+          condition:
+            lambda: !lambda |
+              const auto op = id(door_cover).current_operation;
+              return op != COVER_OPERATION_IDLE || op != COVER_OPERATION_CLOSING;
           else:
             - cover.close: door_cover
       - logger.log:
