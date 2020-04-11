@@ -117,6 +117,7 @@ binary_sensor:
   #  id: s2_isr
 
   - platform: gpio
+    device_class: safety
     id: blk1
     name: "Safety block 1"
     pin:
