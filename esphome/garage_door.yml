@@ -93,6 +93,21 @@ globals:
     restore_value: no
     initial_value: COVER_OPERATION_IDLE
 
+  - id: door_open_cnt
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+
+  - id: door_close_cnt
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+
+  - id: door_blocked1_cnt
+    type: uint32_t
+    restore_value: yes
+    initial_value: '0'
+
 binary_sensor:
   - platform: status
     name: Garage Door Status
@@ -106,15 +121,14 @@ binary_sensor:
     name: "Safety block 1"
     pin:
       number: 33
-      inverted: false  # open circuit = block
+      inverted: false  # open circuit => block
     filters:
       - delayed_on: 10ms
     on_press:
       then:
-        - globals.set: &set_prev_op
-            id: prev_door_operation
-            value: !lambda |
-              return id(door_cover).current_operation;
+        - lambda: !lambda |
+            id(prev_door_operation) = id(door_cover).current_operation;
+            id(door_blocked1_cnt) += 1;
         - logger.log:
             format: "blk1: activated: stopping cover"
             level: INFO
@@ -150,7 +164,7 @@ binary_sensor:
       inverted: true  # use as Open/Close button
     filters:
       - delayed_on: 10ms
-    on_click:
+    on_press:
       then:
         - logger.log:
             format: "blk2: activated: prev state: %s"
@@ -166,8 +180,7 @@ binary_sensor:
               if (id(prev_door_operation) == COVER_OPERATION_CLOSING ||
                   id(door_cover).is_fully_closed()) {
                 call.set_command_open();
-              } else if (id(prev_door_operation) == COVER_OPERATION_OPENING ||
-                         id(door_cover).is_fully_open()) {
+              } else {
                 call.set_command_close();
               }
             }
@@ -184,6 +197,23 @@ binary_sensor:
       inverted: true
     filters:
       - delayed_on: 10ms
+    on_press:
+      then:
+        - logger.log:
+            format: "rsns: activated. wait 10s to give a time to fully unroll the door."
+            level: INFO
+        - delay: 10s
+        - logger.log:
+            format: "rsns: setting door state as closed."
+            level: INFO
+        - lambda: !lambda |
+            if (id(door_cover).current_operation != COVER_OPERATION_OPENING) {
+              id(door_cover).position = COVER_CLOSED;
+              id(door_cover).publish_state(true);
+            }
+        - logger.log:
+            format: "rsns: done"
+            level: INFO
 
 text_sensor:
   - platform: wifi_info
@@ -218,6 +248,24 @@ sensor:
       name: "Power Factor"
     update_interval: 10s
 
+  - platform: template
+    name: "Door Open Count"
+    lambda: !lambda |
+      return float(id(door_open_cnt));
+    update_interval: 10s
+
+  - platform: template
+    name: "Door Close Count"
+    lambda: !lambda |
+      return float(id(door_close_cnt));
+    update_interval: 10s
+
+  - platform: template
+    name: "Door Blocked 1 Count"
+    lambda: !lambda |
+      return float(id(door_blocked1_cnt));
+    update_interval: 10s
+
 switch:
   - platform: gpio
     name: Door Motor Up
@@ -242,24 +290,41 @@ cover:
   #       so it's possible to detect that operation is done
   #       by checking that PZEM Current < 0.1 A
   #
-  #       blk1 and blk2 will be used to STOP motion
+  #       blk1 used to STOP motion
   #       because something blocks gate, e.g. a car.
+  #       if problem resolves - continue operation.
   #
-  #       rsns should indicate that door is closed
+  #       blk2 used as Open/Close/Stop button.
   #
-  # TODO: make custom cover controller
+  #       rsns inductive endstop detects when door is closed.
   - platform: time_based
     id: door_cover
     name: Garage Door
     device_class: garage
 
-    open_action:
-      - switch.turn_on: k1_up
     open_duration: 2min
+    open_action:
+      - if: &blk1_if
+          condition:
+            binary_sensor.is_on: blk1
+          then:
+            - logger.log:
+                format: "door_cover: blk1 activated, operations blocked."
+                level: WARN
+            - cover.stop: door_cover
+          else:
+            - switch.turn_on: k1_up
+      - lambda: !lambda |
+          id(door_open_cnt) += 1;
 
-    close_action:
-      - switch.turn_on: k2_down
     close_duration: 2min
+    close_action:
+      - if:
+          <<: *blk1_if
+          else:
+            - switch.turn_on: k2_down
+      - lambda: !lambda |
+          id(door_close_cnt) += 1;
 
     stop_action:
       - switch.turn_off: k1_up
