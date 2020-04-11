@@ -166,28 +166,8 @@ binary_sensor:
       - delayed_on: 10ms
     on_press:
       then:
-        - logger.log:
-            format: "blk2: activated: prev state: %s"
-            level: INFO
-            args: [*prev_state_str]
-        - lambda: !lambda |
-            auto op = id(door_cover).current_operation;
-            auto call = id(door_cover).make_call();
-            if (op != COVER_OPERATION_IDLE) {
-              id(prev_door_operation) = op;
-              call.set_command_stop();
-            } else {
-              if (id(prev_door_operation) == COVER_OPERATION_CLOSING ||
-                  id(door_cover).is_fully_closed()) {
-                call.set_command_open();
-              } else {
-                call.set_command_close();
-              }
-            }
-            call.perform();
-        - logger.log:
-            format: "blk2: operation done"
-            level: INFO
+        - logger.log: "blk2: activated"
+        - script.execute: open_close_stop_button_scr
 
   - platform: gpio
     id: rsns
@@ -221,6 +201,9 @@ text_sensor:
       name: SSID
     bssid:
       name: BSSID
+
+  - platform: version
+    name: "ESPHome version"
 
 sensor:
   - platform: wifi_signal
@@ -269,6 +252,7 @@ sensor:
 switch:
   - platform: gpio
     name: Door Motor Up
+    internal: true
     id: k1_up
     pin: 2
     # NOTE: hardware has lock from that,
@@ -280,6 +264,7 @@ switch:
 
   - platform: gpio
     name: Door Motor Down
+    internal: true
     id: k2_down
     pin: 4
     interlock: *relay_lock
@@ -333,3 +318,59 @@ cover:
     # NOTE: my roller have it, but i do not want to leave
     #       motor energized.
     has_built_in_endstop: false
+
+script:
+  - id: open_close_stop_button_scr
+    then:
+      - logger.log:
+          format: "open/close/stop activated: prev state: %s"
+          level: INFO
+          args: [*prev_state_str]
+      - lambda: !lambda |
+          const auto op = id(door_cover).current_operation;
+          auto call = id(door_cover).make_call();
+          if (op != COVER_OPERATION_IDLE) {
+            id(prev_door_operation) = op;
+            call.set_command_stop();
+          } else {
+            if (id(prev_door_operation) == COVER_OPERATION_CLOSING ||
+                id(door_cover).is_fully_closed()) {
+              call.set_command_open();
+            } else {
+              call.set_command_close();
+            }
+          }
+          call.perform();
+      - logger.log:
+          format: "open/close/stop: operation performed"
+          level: INFO
+
+  - id: open_stop_button_scr
+    then:
+      - logger.log:
+          format: "open/stop: activated"
+          level: INFO
+      - if: &scr_if
+          condition:
+            lambda: !lambda |
+              return id(door_cover).current_operation != COVER_OPERATION_IDLE;
+          then:
+            - cover.stop: door_cover
+          else:
+            - cover.open: door_cover
+      - logger.log:
+          format: "open/stop: operation performed"
+          level: INFO
+
+  - id: close_stop_button_scr
+    then:
+      - logger.log:
+          format: "close/stop: activated"
+          level: INFO
+      - if:
+          <<: *scr_if
+          else:
+            - cover.close: door_cover
+      - logger.log:
+          format: "close/stop: operation performed"
+          level: INFO
