@@ -87,7 +87,16 @@ font:
     id: font_m14
     size: 14
 
+globals:
+  - id: prev_door_operation
+    type: CoverOperation
+    restore_value: no
+    initial_value: COVER_OPERATION_IDLE
+
 binary_sensor:
+  - platform: status
+    name: Garage Door Status
+
   #- platform: gpio
   #  pin: 27
   #  id: s2_isr
@@ -97,18 +106,63 @@ binary_sensor:
     name: "Safety block 1"
     pin:
       number: 33
-      inverted: true  # TODO: in real installation open circuit = block
+      inverted: false  # open circuit = block
     filters:
       - delayed_on: 10ms
+    on_press:
+      then:
+        - globals.set: &set_prev_op
+            id: prev_door_operation
+            value: !lambda |
+              return id(door_cover).current_operation;
+        - logger.log: "blk1: activated: stopping cover"
+        - cover.stop: door_cover
+        - logger.log: "blk1: cover stopped"
+    on_release:
+      then:
+        - logger.log:
+            format: "blk1: deactivated: continue cover operation: %s"
+            args:
+              - &prev_state_str "cover_operation_to_str(id(prev_door_operation))"
+        - lambda: !lambda |
+            auto call = id(door_cover).make_call();
+            if (id(prev_door_operation) == COVER_OPERATION_OPENING) {
+              call.set_command_open();
+              call.perform();
+            } else if (id(prev_door_operation) == COVER_OPERATION_CLOSING) {
+              call.set_command_close();
+              call.perform();
+            }
+        - logger.log: "blk1: operation restored"
 
   - platform: gpio
     id: blk2
     name: "Safety block 2 / Open/Close"
     pin:
       number: 34
-      inverted: true
+      inverted: true  # use as Open/Close button
     filters:
       - delayed_on: 10ms
+    on_click:
+      then:
+        - logger.log:
+            format: "blk2: activated: prev state: %s"
+            args: [*prev_state_str]
+        - lambda: !lambda |
+            auto op = id(door_cover).current_operation;
+            auto call = id(door_cover).make_call();
+            if (op != COVER_OPERATION_IDLE) {
+              id(prev_door_operation) = op;
+              call.set_command_stop();
+            } else {
+              if (id(prev_door_operation) == COVER_OPERATION_CLOSING) {
+                call.set_command_open();
+              } else {
+                call.set_command_close();
+              }
+            }
+            call.perform();
+        - logger.log: "blk2: operation done"
 
   - platform: gpio
     id: rsns
@@ -134,6 +188,9 @@ sensor:
   - platform: esp32_hall
     name: "ESP32 Hall Sensor"
     update_interval: 10s
+
+  - platform: uptime
+    name: "Uptime"
 
   - platform: pzemac
     modbus_id: modbus_pzem
@@ -180,7 +237,9 @@ cover:
   #
   # TODO: make custom cover controller
   - platform: time_based
-    name: Door
+    id: door_cover
+    name: Garage Door
+    device_class: garage
 
     open_action:
       - switch.turn_on: k1_up
