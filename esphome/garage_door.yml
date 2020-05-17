@@ -7,11 +7,7 @@ esphome:
   board: esp-wrover-kit
 
 wifi:
-  networks:
-    - ssid: !secret wifi_ssid1
-      password: !secret wifi_passwd1
-    - ssid: !secret wifi_ssid2
-      password: !secret wifi_passwd2
+  networks: !secret wifi_networks
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
