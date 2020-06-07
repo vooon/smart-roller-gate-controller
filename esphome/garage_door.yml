@@ -29,6 +29,16 @@ debug:
 
 # Enable Home Assistant API
 api:
+  services:
+    - service: open_close_stop_button
+      then:
+        - script.execute: open_close_stop_button_scr
+    - service: open_stop_button
+      then:
+        - script.execute: open_stop_button_scr
+    - service: close_stop_button
+      then:
+        - script.execute: close_stop_button_scr
 
 web_server:
 
@@ -86,6 +96,11 @@ globals:
     restore_value: yes
     initial_value: 'true'
 
+  - id: gv_blk_override
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+
 binary_sensor:
   - platform: status
     name: Garage Door 1 Status
@@ -96,7 +111,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_open
-    name: Ext remote Open
+    name: Garage Door 1 Ext remote Open
     pin:
       number: 21
       mode: INPUT_PULLDOWN
@@ -134,7 +149,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_close
-    name: Ext remote Close
+    name: Garage Door 1 Ext remote Close
     pin:
       number: 22
       mode: INPUT_PULLDOWN
@@ -160,47 +175,16 @@ binary_sensor:
   - platform: gpio
     device_class: safety
     id: blk1
-    name: "Safety block 1"
+    name: "Garage Door 1 Safety block 1"
     pin:
       number: 33
       inverted: false  # open circuit => block
     filters:
       - delayed_on: 10ms
-    on_press:
-      then:
-        - lambda: !lambda |
-            id(gv_prev_door_operation) = id(door_cover).current_operation;
-            id(gv_door_blocked1_cnt) += 1;
-        - logger.log:
-            format: "blk1: activated: stopping cover"
-            level: INFO
-        - cover.stop: door_cover
-        - logger.log:
-            format: "blk1: cover stopped"
-            level: INFO
-    on_release:
-      then:
-        - logger.log:
-            format: "blk1: deactivated: continue cover operation: %s"
-            level: INFO
-            args:
-              - &prev_state_str "cover_operation_to_str(id(gv_prev_door_operation))"
-        - lambda: !lambda |
-            auto call = id(door_cover).make_call();
-            if (id(gv_prev_door_operation) == COVER_OPERATION_OPENING) {
-              call.set_command_open();
-              call.perform();
-            } else if (id(gv_prev_door_operation) == COVER_OPERATION_CLOSING) {
-              call.set_command_close();
-              call.perform();
-            }
-        - logger.log:
-            format: "blk1: operation restored"
-            level: INFO
 
   - platform: gpio
     id: blk2
-    name: "Safety block 2 / Open/Close"
+    name: "Garafe Door 1 Safety block 2 / Open/Close"
     pin:
       number: 34
       inverted: true  # use as Open/Close button
@@ -213,7 +197,7 @@ binary_sensor:
 
   - platform: gpio
     id: rsns
-    name: "Door closed end stop"
+    name: "Garage Door 1 closed end stop"
     pin:
       number: 35
       inverted: true
@@ -237,19 +221,67 @@ binary_sensor:
             format: "rsns: done"
             level: INFO
 
+  - platform: template
+    name: Garage Door 1 Closed
+    device_class: garage_door
+    lambda: |-
+      // NOTE: Home Assistant have inverted meaning of sensor: ON: open, OFF: closed
+      return !id(rsns).state;
+
+  - platform: template
+    id: blk_any
+    name: Garage Door 1 Safety Block (any)
+    lambda: |-
+      if (id(blk_override).state) {
+        return false;
+      } else {
+        return id(blk1).state;
+      }
+    on_press:
+      then:
+        - lambda: !lambda |
+            id(gv_prev_door_operation) = id(door_cover).current_operation;
+            id(gv_door_blocked1_cnt) += 1;
+        - logger.log:
+            format: "blk: activated: stopping cover"
+            level: INFO
+        - cover.stop: door_cover
+        - logger.log:
+            format: "blk: cover stopped"
+            level: INFO
+    on_release:
+      then:
+        - logger.log:
+            format: "blk: deactivated: continue cover operation: %s"
+            level: INFO
+            args:
+              - &prev_state_str "cover_operation_to_str(id(gv_prev_door_operation))"
+        - lambda: !lambda |
+            auto call = id(door_cover).make_call();
+            if (id(gv_prev_door_operation) == COVER_OPERATION_OPENING) {
+              call.set_command_open();
+              call.perform();
+            } else if (id(gv_prev_door_operation) == COVER_OPERATION_CLOSING) {
+              call.set_command_close();
+              call.perform();
+            }
+        - logger.log:
+            format: "blk: operation restored"
+            level: INFO
+
 text_sensor:
   - platform: wifi_info
     ssid:
-      name: SSID
+      name: Garage Door 1 SSID
     bssid:
-      name: BSSID
+      name: Garage Door 1 BSSID
 
   - platform: version
     name: "ESPHome version"
 
 sensor:
   - platform: wifi_signal
-    name: "WiFi Signal Sensor"
+    name: "Garage Door 1 WiFi Signal"
     update_interval: 10s
 
   - platform: esp32_hall
@@ -257,7 +289,7 @@ sensor:
     update_interval: 10s
 
   - platform: uptime
-    name: "Uptime"
+    name: "Garage Door 1 Uptime"
 
   - platform: template
     name: "Garage Door 1 Open Count"
@@ -326,6 +358,22 @@ switch:
           id: gv_ext_remote_enabled
           value: 'false'
 
+  - platform: template
+    name: Garage Door 1 Safety block override
+    id: blk_override
+    lambda: |-
+      return id(gv_blk_override);
+    turn_on_action:
+      - globals.set:
+          id: gv_blk_override
+          value: 'true'
+      - script.execute: deactivate_blk_override_scr
+    turn_off_action:
+      - globals.set:
+          id: gv_blk_override
+          value: 'false'
+      - script.stop: deactivate_blk_override_scr
+
 cover:
   # NOTE: my roller have built-in endstops,
   #       so it's possible to detect that operation is done
@@ -345,12 +393,12 @@ cover:
 
     open_duration: 2min
     open_action:
-      - if: &blk1_if
+      - if: &blk_if
           condition:
-            binary_sensor.is_on: blk1
+            binary_sensor.is_on: blk_any
           then:
             - logger.log:
-                format: "door_cover: blk1 activated, operations blocked."
+                format: "door_cover: blk activated, operations blocked."
                 level: WARN
             - cover.stop: door_cover
           else:
@@ -361,7 +409,7 @@ cover:
     close_duration: 2min
     close_action:
       - if:
-          <<: *blk1_if
+          <<: *blk_if
           else:
             - switch.turn_on: k2_down
       - lambda: !lambda |
@@ -438,3 +486,14 @@ script:
       - logger.log:
           format: "close/stop: operation performed"
           level: INFO
+
+  - id: deactivate_blk_override_scr
+    then:
+      - logger.log:
+          format: "safety block override will be disabled after 5min"
+          level: WARN
+      - delay: 5min
+      - logger.log:
+          format: "safety block override disabled"
+          level: INFO
+      - switch.turn_off: blk_override
