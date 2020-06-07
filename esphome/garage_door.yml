@@ -2,7 +2,7 @@
 #<<: !include secrets.yaml
 
 esphome:
-  name: garage_door
+  name: garage_door_1
   platform: ESP32
   board: esp-wrover-kit
 
@@ -44,8 +44,8 @@ uart:
 #    baud_rate: 115200
 #    stop_bits: 1
   - id: uart_cc
-    tx_pin: 16
-    rx_pin: 17
+    tx_pin: 17
+    rx_pin: 16
     baud_rate: 115200
     stop_bits: 1
   - id: uart_pzem
@@ -62,26 +62,6 @@ spi:
   clk_pin: 14
   mosi_pin: 13
   miso_pin: 12
-
-#display:
-#  - platform: waveshare_epaper
-#    cs_pin: 23
-#    dc_pin: 25
-#    busy_pin:
-#      number: 32
-#      mode: INPUT_PULLUP
-#    reset_pin: 0
-#    model: 2.90in-b
-#    #full_update_every: 30
-#    update_interval: 60s
-#    lambda: |-
-#      it.print(0, 0, id(font_m14), "Hello World!");
-#      //it.fill(COLOR_ON);
-#
-#font:
-#  - file: UbuntuMono-R.ttf
-#    id: font_m14
-#    size: 14
 
 globals:
   - id: prev_door_operation
@@ -106,7 +86,7 @@ globals:
 
 binary_sensor:
   - platform: status
-    name: Garage Door Status
+    name: Garage Door 1 Status
 
   #- platform: gpio
   #  pin: 27
@@ -247,6 +227,9 @@ sensor:
     update_interval: 10s
 
 switch:
+  - platform: restart
+    name: Garage Door 1 reboot
+
   - platform: gpio
     name: Door Motor Up
     #internal: true
