@@ -101,6 +101,11 @@ globals:
     restore_value: yes
     initial_value: 'false'
 
+  - id: gv_blk2_enabled
+    type: bool
+    restore_value: yes
+    initial_value: "true"
+
 binary_sensor:
   - platform: status
     name: Garage Door 1 Status
@@ -192,8 +197,18 @@ binary_sensor:
       - delayed_on: 10ms
     on_press:
       then:
-        - logger.log: "blk2: activated"
-        - script.execute: open_close_stop_button_scr
+        - logger.log:
+            format: "blk2: activated"
+            level: INFO
+        - if:
+            condition:
+              - switch.is_on: blk2_enabled
+            then:
+              - script.execute: open_close_stop_button_scr
+            else:
+              - logger.log:
+                  format: "blk2: disabled"
+                  level: WARN
 
   - platform: gpio
     id: rsns
@@ -231,6 +246,7 @@ binary_sensor:
   - platform: template
     id: blk_any
     name: Garage Door 1 Safety Block (any)
+    device_class: safety
     lambda: |-
       if (id(blk_override).state) {
         return false;
@@ -293,18 +309,21 @@ sensor:
 
   - platform: template
     name: "Garage Door 1 Open Count"
+    icon: mdi:counter
     lambda: !lambda |
       return float(id(gv_door_open_cnt));
     update_interval: 10s
 
   - platform: template
     name: "Garage Door 1 Close Count"
+    icon: mdi:counter
     lambda: !lambda |
       return float(id(gv_door_close_cnt));
     update_interval: 10s
 
   - platform: template
     name: "Garage Door 1 Blocked Count"
+    icon: mdi:counter
     lambda: !lambda |
       return float(id(gv_door_blocked1_cnt));
     update_interval: 10s
@@ -347,6 +366,7 @@ switch:
   - platform: template
     name: Garage Door 1 External Remote Enabled
     id: ext_remote_enabled
+    icon: mdi:remote
     lambda: |-
       return id(gv_ext_remote_enabled);
     turn_on_action:
@@ -361,6 +381,7 @@ switch:
   - platform: template
     name: Garage Door 1 Safety block override
     id: blk_override
+    icon: mdi:debug-step-over
     lambda: |-
       return id(gv_blk_override);
     turn_on_action:
@@ -373,6 +394,21 @@ switch:
           id: gv_blk_override
           value: 'false'
       - script.stop: deactivate_blk_override_scr
+
+  - platform: template
+    name: Garage Door 1 Internal Open/Close/Stop button Enabled
+    id: blk2_enabled
+    icon: mdi:lock-open
+    lambda: |-
+      return id(gv_blk2_enabled);
+    turn_on_action:
+      - globals.set:
+          id: gv_blk2_enabled
+          value: 'true'
+    turn_off_action:
+      - globals.set:
+          id: gv_blk2_enabled
+          value: 'false'
 
 cover:
   # NOTE: my roller have built-in endstops,
