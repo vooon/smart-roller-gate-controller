@@ -44,25 +44,16 @@ time:
 #esp32_ble_tracker:
 
 uart:
-#  - id: uart
-#    tx_pin: 1
-#    rx_pin: 3
-#    baud_rate: 115200
-#    stop_bits: 1
+  #- id: uart
+  #  tx_pin: 1
+  #  rx_pin: 3
+  #  baud_rate: 115200
+  #  stop_bits: 1
   - id: uart_cc
     tx_pin: 17
     rx_pin: 16
     baud_rate: 115200
     stop_bits: 1
-#  - id: uart_pzem
-#    tx_pin: 21
-#    rx_pin: 22
-#    baud_rate: 9600
-#    stop_bits: 2
-
-#modbus:
-#  uart_id: uart_pzem
-#  id: modbus_pzem
 
 spi:
   clk_pin: 14
@@ -109,6 +100,7 @@ binary_sensor:
     pin:
       number: 21
       mode: INPUT_PULLDOWN
+      inverted: false
     filters:
       - delayed_on: 10ms
     on_press:
@@ -146,6 +138,7 @@ binary_sensor:
     pin:
       number: 22
       mode: INPUT_PULLDOWN
+      inverted: false
     filters:
       - delayed_on: 10ms
     on_press:
@@ -266,34 +259,20 @@ sensor:
   - platform: uptime
     name: "Uptime"
 
-  # - platform: pzemac
-  #   modbus_id: modbus_pzem
-  #   current:
-  #     name: "Current"
-  #   voltage:
-  #     name: "Voltage"
-  #   power:
-  #     name: "Power"
-  #   frequency:
-  #     name: "Frequency"
-  #   power_factor:
-  #     name: "Power Factor"
-  #   update_interval: 10s
-
   - platform: template
-    name: "Door Open Count"
+    name: "Garage Door 1 Open Count"
     lambda: !lambda |
       return float(id(gv_door_open_cnt));
     update_interval: 10s
 
   - platform: template
-    name: "Door Close Count"
+    name: "Garage Door 1 Close Count"
     lambda: !lambda |
       return float(id(gv_door_close_cnt));
     update_interval: 10s
 
   - platform: template
-    name: "Door Blocked 1 Count"
+    name: "Garage Door 1 Blocked Count"
     lambda: !lambda |
       return float(id(gv_door_blocked1_cnt));
     update_interval: 10s
@@ -304,7 +283,7 @@ switch:
 
   - platform: gpio
     name: Door Motor Up
-    #internal: true
+    internal: true
     id: k1_up
     pin: 2
     # NOTE: hardware has lock from that,
@@ -317,7 +296,7 @@ switch:
 
   - platform: gpio
     name: Door Motor Down
-    #internal: true
+    internal: true
     id: k2_down
     pin: 4
     interlock: *relay_lock
@@ -327,13 +306,14 @@ switch:
   - platform: gpio
     name: CC Reset
     id: cc_reset
+    internal: true
     pin:
       number: 5
       inverted: true
     restore_mode: always off
 
   - platform: template
-    name: External remote Enabled
+    name: Garage Door 1 External Remote Enabled
     id: ext_remote_enabled
     lambda: |-
       return id(gv_ext_remote_enabled);
@@ -360,7 +340,7 @@ cover:
   #       rsns inductive endstop detects when door is closed.
   - platform: time_based
     id: door_cover
-    name: Garage Door
+    name: Garage Door 1
     device_class: garage
 
     open_duration: 2min
