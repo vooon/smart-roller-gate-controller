@@ -29,6 +29,7 @@ debug:
 
 # Enable Home Assistant API
 api:
+  password: !secret api_password
   services:
     - service: open_close_stop_button
       then:
@@ -39,10 +40,25 @@ api:
     - service: close_stop_button
       then:
         - script.execute: close_stop_button_scr
+    - service: reset_counters
+      then:
+        - globals.set:
+            name: gv_door_open_cnt
+            value: '0'
+        - globals.set:
+            name: gv_door_close_cnt
+            value: '0'
+        - globals.set:
+            name: gv_door_blocked_cnt
+            value: '0'
 
 web_server:
+  auth:
+    username: admin
+    password: !secret web_password
 
 ota:
+  password: !secret ota_password
 
 time:
   - platform: homeassistant
@@ -86,7 +102,7 @@ globals:
     restore_value: yes
     initial_value: '0'
 
-  - id: gv_door_blocked1_cnt
+  - id: gv_door_blocked_cnt
     type: uint32_t
     restore_value: yes
     initial_value: '0'
@@ -257,7 +273,7 @@ binary_sensor:
       then:
         - lambda: !lambda |
             id(gv_prev_door_operation) = id(door_cover).current_operation;
-            id(gv_door_blocked1_cnt) += 1;
+            id(gv_door_blocked_cnt) += 1;
         - logger.log:
             format: "blk: activated: stopping cover"
             level: INFO
@@ -325,7 +341,7 @@ sensor:
     name: "Garage Door 1 Blocked Count"
     icon: mdi:counter
     lambda: !lambda |
-      return float(id(gv_door_blocked1_cnt));
+      return float(id(gv_door_blocked_cnt));
     update_interval: 10s
 
 switch:
