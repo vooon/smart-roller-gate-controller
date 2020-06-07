@@ -6,6 +6,12 @@ esphome:
   platform: ESP32
   board: esp-wrover-kit
 
+  on_boot:
+    then:
+      - switch.turn_on: cc_reset
+      - delay: 10ms
+      - switch.turn_off: cc_reset
+
 wifi:
   networks: !secret wifi_networks
 
