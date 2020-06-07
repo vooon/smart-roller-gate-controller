@@ -1,3 +1,4 @@
 (sym_lib_table
   (lib (name rgc_components)(type Legacy)(uri ${KIPRJMOD}/rgc_components.lib)(options "")(descr ""))
+  (lib (name smart-roller-gate-controller-rescue)(type Legacy)(uri ${KIPRJMOD}/smart-roller-gate-controller-rescue.lib)(options "")(descr ""))
 )

@@ -48,15 +48,15 @@ uart:
     rx_pin: 16
     baud_rate: 115200
     stop_bits: 1
-  - id: uart_pzem
-    tx_pin: 21
-    rx_pin: 22
-    baud_rate: 9600
-    stop_bits: 2
+#  - id: uart_pzem
+#    tx_pin: 21
+#    rx_pin: 22
+#    baud_rate: 9600
+#    stop_bits: 2
 
-modbus:
-  uart_id: uart_pzem
-  id: modbus_pzem
+#modbus:
+#  uart_id: uart_pzem
+#  id: modbus_pzem
 
 spi:
   clk_pin: 14
@@ -64,25 +64,30 @@ spi:
   miso_pin: 12
 
 globals:
-  - id: prev_door_operation
+  - id: gv_prev_door_operation
     type: CoverOperation
     restore_value: no
     initial_value: COVER_OPERATION_IDLE
 
-  - id: door_open_cnt
+  - id: gv_door_open_cnt
     type: uint32_t
     restore_value: yes
     initial_value: '0'
 
-  - id: door_close_cnt
+  - id: gv_door_close_cnt
     type: uint32_t
     restore_value: yes
     initial_value: '0'
 
-  - id: door_blocked1_cnt
+  - id: gv_door_blocked1_cnt
     type: uint32_t
     restore_value: yes
     initial_value: '0'
+
+  - id: gv_ext_remote_enabled
+    type: bool
+    restore_value: yes
+    initial_value: 'true'
 
 binary_sensor:
   - platform: status
@@ -91,6 +96,67 @@ binary_sensor:
   #- platform: gpio
   #  pin: 27
   #  id: s2_isr
+
+  - platform: gpio
+    id: ext_open
+    name: Ext remote Open
+    pin:
+      number: 21
+      mode: INPUT_PULLDOWN
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - if:
+            condition:
+              - switch.is_on: ext_remote_enabled
+            then:
+              - logger.log:
+                  format: "ext_open: activated: opening cover"
+                  level: INFO
+              - cover.open: door_cover
+            else:
+              - logger.log:
+                  format: "ext_open: activated but feature disabled"
+                  level: WARN
+    on_release: &ext_on_release
+      then:
+        - if:
+            condition:
+              - switch.is_on: ext_remote_enabled
+            then:
+              - logger.log:
+                  format: "ext: deactivated: stopping cover"
+                  level: INFO
+              - cover.stop: door_cover
+            else:
+              - logger.log:
+                  format: "ext: deactivated but feature disabled"
+                  level: WARN
+
+  - platform: gpio
+    id: ext_close
+    name: Ext remote Close
+    pin:
+      number: 22
+      mode: INPUT_PULLDOWN
+    filters:
+      - delayed_on: 10ms
+    on_press:
+      then:
+        - if:
+            condition:
+              - switch.is_on: ext_remote_enabled
+            then:
+              - logger.log:
+                  format: "ext_close: activated: closing cover"
+                  level: INFO
+              - cover.close: door_cover
+            else:
+              - logger.log:
+                  format: "ext_close: activated but feature disabled"
+                  level: WARN
+    on_release: *ext_on_release
 
   - platform: gpio
     device_class: safety
@@ -104,8 +170,8 @@ binary_sensor:
     on_press:
       then:
         - lambda: !lambda |
-            id(prev_door_operation) = id(door_cover).current_operation;
-            id(door_blocked1_cnt) += 1;
+            id(gv_prev_door_operation) = id(door_cover).current_operation;
+            id(gv_door_blocked1_cnt) += 1;
         - logger.log:
             format: "blk1: activated: stopping cover"
             level: INFO
@@ -119,13 +185,13 @@ binary_sensor:
             format: "blk1: deactivated: continue cover operation: %s"
             level: INFO
             args:
-              - &prev_state_str "cover_operation_to_str(id(prev_door_operation))"
+              - &prev_state_str "cover_operation_to_str(id(gv_prev_door_operation))"
         - lambda: !lambda |
             auto call = id(door_cover).make_call();
-            if (id(prev_door_operation) == COVER_OPERATION_OPENING) {
+            if (id(gv_prev_door_operation) == COVER_OPERATION_OPENING) {
               call.set_command_open();
               call.perform();
-            } else if (id(prev_door_operation) == COVER_OPERATION_CLOSING) {
+            } else if (id(gv_prev_door_operation) == COVER_OPERATION_CLOSING) {
               call.set_command_close();
               call.perform();
             }
@@ -194,36 +260,36 @@ sensor:
   - platform: uptime
     name: "Uptime"
 
-  - platform: pzemac
-    modbus_id: modbus_pzem
-    current:
-      name: "Current"
-    voltage:
-      name: "Voltage"
-    power:
-      name: "Power"
-    frequency:
-      name: "Frequency"
-    power_factor:
-      name: "Power Factor"
-    update_interval: 10s
+  # - platform: pzemac
+  #   modbus_id: modbus_pzem
+  #   current:
+  #     name: "Current"
+  #   voltage:
+  #     name: "Voltage"
+  #   power:
+  #     name: "Power"
+  #   frequency:
+  #     name: "Frequency"
+  #   power_factor:
+  #     name: "Power Factor"
+  #   update_interval: 10s
 
   - platform: template
     name: "Door Open Count"
     lambda: !lambda |
-      return float(id(door_open_cnt));
+      return float(id(gv_door_open_cnt));
     update_interval: 10s
 
   - platform: template
     name: "Door Close Count"
     lambda: !lambda |
-      return float(id(door_close_cnt));
+      return float(id(gv_door_close_cnt));
     update_interval: 10s
 
   - platform: template
     name: "Door Blocked 1 Count"
     lambda: !lambda |
-      return float(id(door_blocked1_cnt));
+      return float(id(gv_door_blocked1_cnt));
     update_interval: 10s
 
 switch:
@@ -240,6 +306,7 @@ switch:
     interlock: &relay_lock
       - k1_up
       - k2_down
+    interlock_wait_time: &relay_lock_time 100ms
     restore_mode: always off
 
   - platform: gpio
@@ -248,7 +315,30 @@ switch:
     id: k2_down
     pin: 4
     interlock: *relay_lock
+    interlock_wait_time: *relay_lock_time
     restore_mode: always off
+
+  - platform: gpio
+    name: CC Reset
+    id: cc_reset
+    pin:
+      number: 5
+      inverted: true
+    restore_mode: always off
+
+  - platform: template
+    name: External remote Enabled
+    id: ext_remote_enabled
+    lambda: |-
+      return id(gv_ext_remote_enabled);
+    turn_on_action:
+      - globals.set:
+          id: gv_ext_remote_enabled
+          value: 'true'
+    turn_off_action:
+      - globals.set:
+          id: gv_ext_remote_enabled
+          value: 'false'
 
 cover:
   # NOTE: my roller have built-in endstops,
@@ -280,7 +370,7 @@ cover:
           else:
             - switch.turn_on: k1_up
       - lambda: !lambda |
-          id(door_open_cnt) += 1;
+          id(gv_door_open_cnt) += 1;
 
     close_duration: 2min
     close_action:
@@ -289,7 +379,7 @@ cover:
           else:
             - switch.turn_on: k2_down
       - lambda: !lambda |
-          id(door_close_cnt) += 1;
+          id(gv_door_close_cnt) += 1;
 
     stop_action:
       - switch.turn_off: k1_up
@@ -311,10 +401,10 @@ script:
           const auto op = id(door_cover).current_operation;
           auto call = id(door_cover).make_call();
           if (op != COVER_OPERATION_IDLE) {
-            id(prev_door_operation) = op;
+            id(gv_prev_door_operation) = op;
             call.set_command_stop();
           } else {
-            if (id(prev_door_operation) == COVER_OPERATION_CLOSING ||
+            if (id(gv_prev_door_operation) == COVER_OPERATION_CLOSING ||
                 id(door_cover).is_fully_closed()) {
               call.set_command_open();
             } else {
