@@ -112,15 +112,15 @@ globals:
     restore_value: yes
     initial_value: 'true'
 
-  - id: gv_blk_override
-    type: bool
-    restore_value: yes
-    initial_value: 'false'
-
   - id: gv_blk2_enabled
     type: bool
     restore_value: yes
     initial_value: "true"
+
+  - id: gv_blk_override
+    type: bool
+    restore_value: no
+    initial_value: 'false'
 
 binary_sensor:
   - platform: status
@@ -138,7 +138,7 @@ binary_sensor:
       mode: INPUT_PULLDOWN
       inverted: false
     filters:
-      - delayed_on: 10ms
+      - delayed_on_off: 10ms
     on_press:
       then:
         - if:
@@ -176,7 +176,7 @@ binary_sensor:
       mode: INPUT_PULLDOWN
       inverted: false
     filters:
-      - delayed_on: 10ms
+      - delayed_on_off: 10ms
     on_press:
       then:
         - if:
@@ -202,6 +202,7 @@ binary_sensor:
       inverted: false  # open circuit => block
     filters:
       - delayed_on: 10ms
+      - delayed_off: 1s
 
   - platform: gpio
     id: blk2
@@ -210,7 +211,7 @@ binary_sensor:
       number: 34
       inverted: true  # use as Open/Close button
     filters:
-      - delayed_on: 10ms
+      - delayed_on_off: 10ms
     on_press:
       then:
         - logger.log:
@@ -233,7 +234,7 @@ binary_sensor:
       number: 35
       inverted: true
     filters:
-      - delayed_on: 10ms
+      - delayed_on_off: 10ms
     on_press:
       then:
         - logger.log:
@@ -327,6 +328,7 @@ sensor:
     name: "Garage Door 1 Open Count"
     icon: mdi:counter
     accuracy_decimals: 0
+    unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_open_cnt));
     update_interval: 10s
@@ -335,6 +337,7 @@ sensor:
     name: "Garage Door 1 Close Count"
     icon: mdi:counter
     accuracy_decimals: 0
+    unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_close_cnt));
     update_interval: 10s
@@ -343,6 +346,7 @@ sensor:
     name: "Garage Door 1 Blocked Count"
     icon: mdi:counter
     accuracy_decimals: 0
+    unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_blocked_cnt));
     update_interval: 10s
