@@ -53,6 +53,7 @@ api:
             value: '0'
 
 web_server:
+  prometheus: true
   auth:
     username: admin
     password: !secret web_password
@@ -450,7 +451,7 @@ cover:
     name: Garage Door 1
     device_class: garage
 
-    open_duration: 2min
+    open_duration: 30s  # at summer it's about 20s, at winter - more
     open_action:
       - if: &blk_if
           condition:
@@ -465,7 +466,7 @@ cover:
       - lambda: !lambda |
           id(gv_door_open_cnt) += 1;
 
-    close_duration: 2min
+    close_duration: 30s  # at summer it's the same 20s, at winter it's faster
     close_action:
       - if:
           <<: *blk_if
