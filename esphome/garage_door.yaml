@@ -53,10 +53,11 @@ api:
             value: '0'
 
 web_server:
-  prometheus: true
   auth:
     username: admin
     password: !secret web_password
+
+prometheus:
 
 ota:
   password: !secret ota_password
