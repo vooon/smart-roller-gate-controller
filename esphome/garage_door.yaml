@@ -12,12 +12,15 @@ esphome:
       - delay: 10ms
       - switch.turn_off: cc_reset
 
+substitutions:
+  uname: Garage Door 1
+
 wifi:
   networks: !secret wifi_networks
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "Garage Door Fallback Hotspot"
+    ssid: "${uname} Fallback Hotspot"
     password: !secret wifi_ap_passwd
 
 captive_portal:
@@ -126,7 +129,7 @@ globals:
 
 binary_sensor:
   - platform: status
-    name: Garage Door 1 Status
+    name: $uname Connected
 
   #- platform: gpio
   #  pin: 27
@@ -134,7 +137,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_open
-    name: Garage Door 1 Ext remote Open
+    name: $uname Ext remote Open
     pin:
       number: 21
       mode: INPUT_PULLDOWN
@@ -172,7 +175,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_close
-    name: Garage Door 1 Ext remote Close
+    name: $uname Ext remote Close
     pin:
       number: 22
       mode: INPUT_PULLDOWN
@@ -198,7 +201,7 @@ binary_sensor:
   - platform: gpio
     device_class: safety
     id: blk1
-    name: "Garage Door 1 Safety block 1"
+    name: "${uname} Safety block 1"
     pin:
       number: 33
       inverted: false  # open circuit => block
@@ -208,7 +211,7 @@ binary_sensor:
 
   - platform: gpio
     id: blk2
-    name: "Garafe Door 1 Safety block 2 / Open/Close"
+    name: "${uname} Safety block 2 / Open/Close"
     pin:
       number: 34
       inverted: true  # use as Open/Close button
@@ -231,7 +234,7 @@ binary_sensor:
 
   - platform: gpio
     id: rsns
-    name: "Garage Door 1 closed end stop"
+    name: "${uname} closed end stop"
     pin:
       number: 35
       inverted: true
@@ -256,7 +259,7 @@ binary_sensor:
             level: INFO
 
   - platform: template
-    name: Garage Door 1 Closed
+    name: $uname Closed
     device_class: garage_door
     lambda: |-
       // NOTE: Home Assistant have inverted meaning of sensor: ON: open, OFF: closed
@@ -264,7 +267,7 @@ binary_sensor:
 
   - platform: template
     id: blk_any
-    name: Garage Door 1 Safety Block (any)
+    name: $uname Safety Block (any)
     device_class: safety
     lambda: |-
       if (id(blk_override).state) {
@@ -284,6 +287,7 @@ binary_sensor:
         - logger.log:
             format: "blk: cover stopped"
             level: INFO
+        - script.execute: update_counters_scr
     on_release:
       then:
         - logger.log:
@@ -307,58 +311,58 @@ binary_sensor:
 text_sensor:
   - platform: wifi_info
     ssid:
-      name: Garage Door 1 SSID
+      name: $uname SSID
     bssid:
-      name: Garage Door 1 BSSID
+      name: $uname BSSID
 
   - platform: version
-    name: "ESPHome version"
+    name: "${uname} ESPHome version"
 
 sensor:
   - platform: wifi_signal
-    name: "Garage Door 1 WiFi Signal"
+    name: "${uname} WiFi Signal"
     update_interval: 10s
 
   - platform: esp32_hall
-    name: "ESP32 Hall Sensor"
+    name: "${uname} ESP32 Hall Sensor"
     update_interval: 10s
 
   - platform: uptime
-    name: "Garage Door 1 Uptime"
+    name: "${uname} Uptime"
 
   - platform: template
-    name: "Garage Door 1 Open Count"
+    name: "${uname} Open Count"
+    id: sns_open_cnt
     icon: mdi:counter
     accuracy_decimals: 0
     unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_open_cnt));
-    update_interval: 10s
 
   - platform: template
-    name: "Garage Door 1 Close Count"
+    name: "${uname} Close Count"
+    id: sns_close_cnt
     icon: mdi:counter
     accuracy_decimals: 0
     unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_close_cnt));
-    update_interval: 10s
 
   - platform: template
-    name: "Garage Door 1 Blocked Count"
+    name: "${uname} Blocked Count"
+    id: sns_blocked_cnt
     icon: mdi:counter
     accuracy_decimals: 0
     unit_of_measurement: count
     lambda: !lambda |
       return float(id(gv_door_blocked_cnt));
-    update_interval: 10s
 
 switch:
   - platform: restart
-    name: Garage Door 1 reboot
+    name: $uname Reboot
 
   - platform: gpio
-    name: Door Motor Up
+    name: $uname Motor Up
     internal: true
     id: k1_up
     pin: 2
@@ -371,7 +375,7 @@ switch:
     restore_mode: always off
 
   - platform: gpio
-    name: Door Motor Down
+    name: $uname Motor Down
     internal: true
     id: k2_down
     pin: 4
@@ -380,7 +384,7 @@ switch:
     restore_mode: always off
 
   - platform: gpio
-    name: CC Reset
+    name: $uname CC Reset
     id: cc_reset
     internal: true
     pin:
@@ -389,7 +393,7 @@ switch:
     restore_mode: always off
 
   - platform: template
-    name: Garage Door 1 External Remote Enabled
+    name: $uname External Remote Enabled
     id: ext_remote_enabled
     icon: mdi:remote
     lambda: |-
@@ -404,7 +408,7 @@ switch:
           value: 'false'
 
   - platform: template
-    name: Garage Door 1 Safety block override
+    name: $uname Safety block override
     id: blk_override
     icon: mdi:debug-step-over
     lambda: |-
@@ -421,7 +425,7 @@ switch:
       - script.stop: deactivate_blk_override_scr
 
   - platform: template
-    name: Garage Door 1 Internal Open/Close/Stop button Enabled
+    name: $uname Internal Open/Close/Stop button Enabled
     id: blk2_enabled
     icon: mdi:lock-open
     lambda: |-
@@ -449,7 +453,7 @@ cover:
   #       rsns inductive endstop detects when door is closed.
   - platform: time_based
     id: door_cover
-    name: Garage Door 1
+    name: $uname
     device_class: garage
 
     open_duration: 30s  # at summer it's about 20s, at winter - more
@@ -466,6 +470,7 @@ cover:
             - switch.turn_on: k1_up
       - lambda: !lambda |
           id(gv_door_open_cnt) += 1;
+      - script.execute: update_counters_scr
 
     close_duration: 30s  # at summer it's the same 20s, at winter it's faster
     close_action:
@@ -475,16 +480,24 @@ cover:
             - switch.turn_on: k2_down
       - lambda: !lambda |
           id(gv_door_close_cnt) += 1;
+      - script.execute: update_counters_scr
 
     stop_action:
       - switch.turn_off: k1_up
       - switch.turn_off: k2_down
+      - script.execute: update_counters_scr
 
     # NOTE: my roller have it, but i do not want to leave
     #       motor energized.
     has_built_in_endstop: false
 
 script:
+  - id: update_counters_scr
+    then:
+      - component.update: sns_open_cnt
+      - component.update: sns_close_cnt
+      - component.update: sns_blocked_cnt
+
   - id: open_close_stop_button_scr
     #name: "Open/Close/Stop Door"
     then:
