@@ -245,7 +245,14 @@ binary_sensor:
         - logger.log:
             format: "rsns: activated. wait 10s to give a time to fully unroll the door."
             level: INFO
-        - delay: 10s
+        - lambda: !lambda |
+            // A hack to give more time for close operation.
+            // Door may remain not fully closed if it's not fully opened before
+            // because cover controller thinks that position is 0.0 at the point when RSNS is activated.
+            if (id(door_cover).current_operation == COVER_OPERATION_CLOSING) {
+              id(door_cover).position = 0.05f;
+            }
+        - delay: 20s
         - logger.log:
             format: "rsns: setting door state as closed."
             level: INFO
