@@ -264,6 +264,18 @@ binary_sensor:
         - logger.log:
             format: "rsns: done"
             level: INFO
+    on_release:
+      then:
+        - logger.log:
+            format: "rsns: disactivated."
+            level: INFO
+        - lambda: !lambda |
+            // A hack to give more time for close operation.
+            // Door may remain not fully closed if it's not fully opened before
+            // because cover controller thinks that position is 0.0 at the point when RSNS is activated.
+            if (id(door_cover).current_operation == COVER_OPERATION_OPENING && id(door_cover).position < 0.05f) {
+              id(door_cover).position = 0.05f;
+            }
 
   - platform: template
     name: $uname Closed
