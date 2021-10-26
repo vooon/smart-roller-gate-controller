@@ -72,6 +72,9 @@ api:
         - globals.set:
             id: gv_door_blocked_cnt
             value: '0'
+    - service: cc_pairing
+      then:
+        - script.execute: cc_pairing_scr
 
 ota:
   password: !secret ota_password
@@ -609,3 +612,23 @@ script:
           format: "safety block override disabled"
           level: INFO
       - switch.turn_off: blk_override
+
+  - id: cc_pairing_scr
+    then:
+      - logger.log:
+          format: "initiate pairing"
+          level: WARN
+      - switch.turn_on: cc_reset
+      - delay: 10ms
+      - switch.turn_off: cc_reset
+      - delay: 2s
+      - switch.turn_on: cc_reset
+      - delay: 10ms
+      - switch.turn_off: cc_reset
+      - delay: 2s
+      - switch.turn_on: cc_reset
+      - delay: 10ms
+      - switch.turn_off: cc_reset
+      - logger.log:
+          format: "pairing initiated"
+          level: WARN
