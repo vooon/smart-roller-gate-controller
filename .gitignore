@@ -28,3 +28,5 @@ fp-info-cache
 *.swp
 .esphome/
 esphome/garage_door/
+esphome/garage_door_1/
+esphome/garage_door_2/

@@ -2,10 +2,10 @@
 #<<: !include secrets.yaml
 
 substitutions:
-  uname: Garage Door 1
-  device_name: garage_door_1
+  uname: Garage Door 2
+  device_name: garage_door_2
   friendly_name: $uname
-  device_description: "Garage Door 1"
+  device_description: "Garage Door 2"
 
 esphome:
   name: '${device_name}'
@@ -406,7 +406,8 @@ switch:
     name: "$uname - Motor Up"
     internal: true
     id: k1_up
-    pin: 2
+    # pin: 2
+    pin: 4  # NOTE: door 2 has inverted motor
     # NOTE: hardware has lock from that,
     #       K1 NC powers K2, so we always may open the door.
     interlock: &relay_lock
@@ -419,7 +420,8 @@ switch:
     name: "$uname - Motor Down"
     internal: true
     id: k2_down
-    pin: 4
+    # pin: 4
+    pin: 2  # NOTE: door 2 has inverted motor
     interlock: *relay_lock
     interlock_wait_time: *relay_lock_time
     restore_mode: always off
@@ -497,7 +499,7 @@ cover:
     name: "$uname"
     device_class: garage
 
-    open_duration: 30s  # at summer it's about 20s, at winter - more
+    open_duration: 40s  # at summer it's about 20s, at winter - more
     open_action:
       - if: &blk_if
           condition:
@@ -513,7 +515,7 @@ cover:
           id(gv_door_open_cnt) += 1;
       - script.execute: update_counters_scr
 
-    close_duration: 30s  # at summer it's the same 20s, at winter it's faster
+    close_duration: 40s  # at summer it's the same 20s, at winter it's faster
     close_action:
       - if:
           <<: *blk_if
