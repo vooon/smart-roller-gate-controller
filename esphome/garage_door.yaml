@@ -1,10 +1,18 @@
 ---
 #<<: !include secrets.yaml
 
+substitutions:
+  uname: Garage Door 1
+  device_name: garage_door_1
+  friendly_name: $uname
+  device_description: "Garage Door 1"
+
 esphome:
-  name: garage_door_1
-  platform: ESP32
-  board: esp-wrover-kit
+  name: '${device_name}'
+  comment: '${device_description}'
+  project:
+    name: "vooon.roller_gate"
+    version: "1.0.0"
 
   on_boot:
     then:
@@ -12,8 +20,16 @@ esphome:
       - delay: 10ms
       - switch.turn_off: cc_reset
 
-substitutions:
-  uname: Garage Door 1
+esp32:
+  board: esp-wrover-kit
+  variant: esp32
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      # CONFIG_ESPTOOLPY_FLASHSIZE: '4MB'
+      # CONFIG_ETH_ENABLED: 'n'
+      # CONFIG_ESPTOOLPY_AFTER_NORESET: 'y'
 
 wifi:
   networks: !secret wifi_networks
@@ -23,16 +39,18 @@ wifi:
     ssid: "${uname} Fallback Hotspot"
     password: !secret wifi_ap_passwd
 
-captive_portal:
+# captive_portal:
 
 # Enable logging
 logger:
 
-debug:
+# debug:
 
 # Enable Home Assistant API
 api:
+  id: api_apiserver
   password: !secret api_password
+  reboot_timeout: 5min
   services:
     - service: open_close_stop_button
       then:
@@ -55,15 +73,15 @@ api:
             id: gv_door_blocked_cnt
             value: '0'
 
-web_server:
-  auth:
-    username: admin
-    password: !secret web_password
-
-prometheus:
-
 ota:
   password: !secret ota_password
+
+# web_server:
+#   auth:
+#     username: admin
+#     password: !secret web_password
+
+# prometheus:
 
 time:
   - platform: homeassistant
@@ -129,7 +147,7 @@ globals:
 
 binary_sensor:
   - platform: status
-    name: $uname Connected
+    name: "$uname - Connected"
 
   #- platform: gpio
   #  pin: 27
@@ -137,7 +155,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_open
-    name: $uname Ext remote Open
+    name: "$uname - Ext remote Open"
     pin:
       number: 21
       mode: INPUT_PULLDOWN
@@ -175,7 +193,7 @@ binary_sensor:
 
   - platform: gpio
     id: ext_close
-    name: $uname Ext remote Close
+    name: "$uname - Ext remote Close"
     pin:
       number: 22
       mode: INPUT_PULLDOWN
@@ -201,7 +219,7 @@ binary_sensor:
   - platform: gpio
     device_class: safety
     id: blk1
-    name: "${uname} Safety block 1"
+    name: "${uname} - Safety block 1"
     pin:
       number: 33
       inverted: false  # open circuit => block
@@ -211,7 +229,7 @@ binary_sensor:
 
   - platform: gpio
     id: blk2
-    name: "${uname} Safety block 2 / Open/Close"
+    name: "${uname} - Safety block 2 / Open/Close"
     pin:
       number: 34
       inverted: true  # use as Open/Close button
@@ -234,7 +252,7 @@ binary_sensor:
 
   - platform: gpio
     id: rsns
-    name: "${uname} closed end stop"
+    name: "${uname} - closed end stop"
     pin:
       number: 35
       inverted: true
@@ -278,7 +296,7 @@ binary_sensor:
             }
 
   - platform: template
-    name: $uname Closed
+    name: "$uname - Closed"
     device_class: garage_door
     lambda: |-
       // NOTE: Home Assistant have inverted meaning of sensor: ON: open, OFF: closed
@@ -286,7 +304,7 @@ binary_sensor:
 
   - platform: template
     id: blk_any
-    name: $uname Safety Block (any)
+    name: "$uname - Safety Block (any)"
     device_class: safety
     lambda: |-
       if (id(blk_override).state) {
@@ -329,28 +347,29 @@ binary_sensor:
 
 text_sensor:
   - platform: wifi_info
+    ip_address:
+      name: "${friendly_name} - IP Address"
+      icon: mdi:wifi
     ssid:
-      name: $uname SSID
+      name: "${friendly_name} - Connected SSID"
+      icon: mdi:wifi-strength-2
     bssid:
-      name: $uname BSSID
+      name: "${friendly_name} - BSSID"
 
   - platform: version
-    name: "${uname} ESPHome version"
+    hide_timestamp: true
+    name: "${friendly_name} - ESPHome Version"
 
 sensor:
   - platform: wifi_signal
-    name: "${uname} WiFi Signal"
-    update_interval: 10s
-
-  - platform: esp32_hall
-    name: "${uname} ESP32 Hall Sensor"
+    name: "$uname - WiFi Signal"
     update_interval: 10s
 
   - platform: uptime
-    name: "${uname} Uptime"
+    name: "$uname - Uptime"
 
   - platform: template
-    name: "${uname} Open Count"
+    name: "${uname} - Open Count"
     id: sns_open_cnt
     icon: mdi:counter
     accuracy_decimals: 0
@@ -359,7 +378,7 @@ sensor:
       return float(id(gv_door_open_cnt));
 
   - platform: template
-    name: "${uname} Close Count"
+    name: "${uname} - Close Count"
     id: sns_close_cnt
     icon: mdi:counter
     accuracy_decimals: 0
@@ -368,7 +387,7 @@ sensor:
       return float(id(gv_door_close_cnt));
 
   - platform: template
-    name: "${uname} Blocked Count"
+    name: "${uname} - Blocked Count"
     id: sns_blocked_cnt
     icon: mdi:counter
     accuracy_decimals: 0
@@ -378,10 +397,10 @@ sensor:
 
 switch:
   - platform: restart
-    name: $uname Reboot
+    name: "$uname - Reboot"
 
   - platform: gpio
-    name: $uname Motor Up
+    name: "$uname - Motor Up"
     internal: true
     id: k1_up
     pin: 2
@@ -394,7 +413,7 @@ switch:
     restore_mode: always off
 
   - platform: gpio
-    name: $uname Motor Down
+    name: "$uname - Motor Down"
     internal: true
     id: k2_down
     pin: 4
@@ -403,7 +422,7 @@ switch:
     restore_mode: always off
 
   - platform: gpio
-    name: $uname CC Reset
+    name: "$uname - CC Reset"
     id: cc_reset
     internal: true
     pin:
@@ -412,7 +431,7 @@ switch:
     restore_mode: always off
 
   - platform: template
-    name: $uname External Remote Enabled
+    name: "$uname - External Remote Enabled"
     id: ext_remote_enabled
     icon: mdi:remote
     lambda: |-
@@ -427,7 +446,7 @@ switch:
           value: 'false'
 
   - platform: template
-    name: $uname Safety block override
+    name: "$uname - Safety block override"
     id: blk_override
     icon: mdi:debug-step-over
     lambda: |-
@@ -444,7 +463,7 @@ switch:
       - script.stop: deactivate_blk_override_scr
 
   - platform: template
-    name: $uname Internal Open/Close/Stop button Enabled
+    name: "$uname - Internal Open/Close/Stop button Enabled"
     id: blk2_enabled
     icon: mdi:lock-open
     lambda: |-
@@ -472,7 +491,7 @@ cover:
   #       rsns inductive endstop detects when door is closed.
   - platform: time_based
     id: door_cover
-    name: $uname
+    name: "$uname"
     device_class: garage
 
     open_duration: 30s  # at summer it's about 20s, at winter - more
